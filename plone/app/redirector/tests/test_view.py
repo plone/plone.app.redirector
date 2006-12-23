@@ -18,25 +18,25 @@ class TestRedirectorView(RedirectorTestCase):
         request['ACTUAL_URL'] = actual_url
         return getMultiAdapter((context, request), name='plone_redirector_view')
         
-    def test_attempt_redirect_with_known_url():
+    def test_attempt_redirect_with_known_url(self):
         pass
         
-    def test_attempt_redirect_with_unknown_url():
+    def test_attempt_redirect_with_unknown_url(self):
         pass
         
-    def test_attempt_redirect_unauthorized():
+    def test_attempt_redirect_unauthorized(self):
         pass
         
-    def test_find_first_parent_found():
+    def test_find_first_parent_found(self):
         pass
         
-    def test_find_first_parent_not_found():
+    def test_find_first_parent_not_found(self):
         pass
         
-    def test_search_leaf():
+    def test_search_leaf(self):
         pass
         
-    def test_search_node():
+    def test_search_node(self):
         pass
 
 def test_suite():
