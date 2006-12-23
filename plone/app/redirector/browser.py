@@ -67,7 +67,7 @@ class FourOhFourView(BrowserView):
                 return obj
         return None
 
-    def search_for_similar(self, path_info):
+    def search_for_similar(self):
         path_elements = self._path_elements()
         if not path_elements:
             return None
@@ -110,4 +110,4 @@ class FourOhFourView(BrowserView):
         if not path.startswith(portal_path):
             return None
 
-        path_elements = path.split('/')
+        return path.split('/')
