@@ -61,6 +61,8 @@ class FourOhFourView(BrowserView):
         path_elements = self._path_elements()
         if not path_elements:
             return None
+        portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        portal = portal_state.portal()
         for i in range(len(path_elements)-1, 0, -1):
             obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
             if obj is not None:
@@ -72,7 +74,7 @@ class FourOhFourView(BrowserView):
         if not path_elements:
             return None
         path_elements.reverse()
-            
+        
         portal_catalog = getToolByName(aq_inner(self.context), 'portal_catalog')
         for element in path_elements:
             if element not in IGNORE_IDS:

@@ -43,11 +43,23 @@ class TestRedirectorView(RedirectorTestCase):
         self.assertEquals(False, view.attempt_redirect())
         self.assertNotEquals(302, self.app.REQUEST.response.getStatus())
         
-    def test_find_first_parent_found(self):
-        pass
+    def test_find_first_parent_found_leaf(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '/f1/p1')
+        obj = view.find_first_parent()
+        self.assertEquals(fu + '/f1', obj.absolute_url())
+        
+    def test_find_first_parent_found_node(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '/f1/p1/p2')
+        obj = view.find_first_parent()
+        self.assertEquals(fu + '/f1', obj.absolute_url())
         
     def test_find_first_parent_not_found(self):
-        pass
+        view = self.view(self.portal, '/foo/f1/p1/p2')
+        self.assertEquals(None, view.find_first_parent())
         
     def test_search_leaf(self):
         self.folder.invokeFactory('Folder', 'f1')
