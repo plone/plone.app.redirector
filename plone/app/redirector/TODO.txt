@@ -1,17 +1,6 @@
 plone.app.redirector to-do
 
- - write path storage
- - test path storage
-    - VHM paths
-    - Unauthorized
-    
- - write view
-    - Performs lookup in path storage
-    - Finds object if there is exactly one
-    - Tests!
+ - finish tests in tests_view.py
 
- - register local utility in CMFPlone GS profile
- - make standard_error_message.py in CMFPlone aware of redirector
+ - make default_error_message.pt in CMFPlone use @@plone_redirector_view
     - alternatively, use a view on NotFound exception (possibly dangerous)
-
- - Make allowances for portal_factory?
