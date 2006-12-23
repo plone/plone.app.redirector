@@ -21,7 +21,7 @@ def objectMoved(obj, event):
 def objectRemoved(obj, event):
     """Tell the redirection storage that the object was removed
     """
-    storage = getUtility(IRedirectionStorage)
+    storage = queryUtility(IRedirectionStorage)
     if storage is not None:
         path = '/'.join(obj.getPhysicalPath())
         storage.destroy(path)

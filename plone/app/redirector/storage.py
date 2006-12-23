@@ -42,6 +42,16 @@ class RedirectionStorage(Persistent):
         >>> p.redirects('/bar/')
         ['/foo']
     
+    Circular references are ignored
+    
+        >>> p.add('/circle', '/circle')
+        >>> p.has_path('/circle')
+        False
+        >>> p.get('/circle', '_marker_')
+        '_marker_'
+        >>> p.redirects('/circle')
+        []
+    
     Add another redirect
     
         >>> p.has_path('/baz')
@@ -108,6 +118,9 @@ class RedirectionStorage(Persistent):
     def add(self, old_path, new_path):
         old_path = self._canonical(old_path)
         new_path = self._canonical(new_path)
+        
+        if old_path == new_path:
+            return
         
         # Forget any existing reverse paths to old_path
         existing_target = self._paths.get(old_path, None)

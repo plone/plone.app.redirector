@@ -1,9 +1,15 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns="http://namespaces.zope.org/browser"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:browser="http://namespaces.zope.org/browser">
 
-    <!-- Register a page for -->
+    <!-- Register a page the UI -->
+    <browser:page
+        name="plone_redirector_view"
+        for="*"
+        class=".browser.FourOhFourView"
+        permission="zope2.View"
+        allowed_interface=".interfaces.IFourOhFourView"
+        />
 
     <!-- Remember the movements of CMF objects -->
     <subscriber
@@ -15,7 +21,7 @@
     <subscriber
         for="Products.CMFCore.interfaces.IContentish
              zope.app.container.interfaces.IObjectRemovedEvent"
-        handler=".subscribers.objectReoved"
+        handler=".subscribers.objectRemoved"
         />
 
 </configure>

@@ -5,8 +5,8 @@ from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
 
-from plone.app.redirector.browser.interfaces import IFourOhFourView
-from plone.app.redirector.browser.interfaces import IRedirectionStorage
+from plone.app.redirector.interfaces import IFourOhFourView
+from plone.app.redirector.interfaces import IRedirectionStorage
 
 from plone.memoize.instance import memoize
 
