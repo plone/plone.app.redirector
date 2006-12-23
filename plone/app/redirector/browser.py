@@ -1,0 +1,99 @@
+from zope.interface import implements
+from zope.component import getUtility, getMultiAdapter
+
+from Acquisition import aq_inner
+from Products.Five.browser import BrowserView
+from Products.CMFCore.utils import getToolByName
+
+from plone.app.redirector.browser.interfaces import IFourOhFourView
+from plone.app.redirector.browser.interfaces import IRedirectionStorage
+
+from plone.memoize.instance import memoize
+
+IGNORE_IDS = ('index_html', 
+              'FrontPage', 
+              'folder_listing', 
+              'folder_contents', 
+              'view',
+              'edit',
+              'properties',
+              'sharing',
+              )
+
+class FourOhFourView(BrowserView):
+    implements(IFourOhFourView)
+    
+    def attempt_redirect(self):
+        url = self._url()
+        if not url:
+            return False
+            
+        try:
+            old_path = self.request.physicalPathFromURL(url)
+        except ValueError:
+            return False
+        
+        storage = getUtility(IRedirectionStorage)
+        new_path = storage.get(old_path)
+
+        if not new_path:
+            return False
+            
+        url = self.request.physicalPathToURL(new_path)
+        self.request.response.redirect(url)
+        return True
+
+    def find_first_parent(self):
+        path_elements = self._path_elements()
+        if not path_elements:
+            return None
+        for i in range(len(path_elements)-1, 0, -1):
+            obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
+            if obj is not None:
+                return obj
+        return None
+
+    def search_for_similar(self, path_info):
+        path_elements = self._path_elements()
+        if not path_elements:
+            return None
+        path_elements.reverse()
+            
+        portal_catalog = getToolByName(aq_inner(self.context), 'portal_catalog')
+        for element in path_elements:
+            if element not in IGNORE_IDS:
+                result_set = portal_catalog(SearchableText=element)
+                if result_set:
+                    return result_set
+        return []
+        
+    @memoize
+    def _url(self):
+        """Get the current, canonical URL
+        """
+        return self.request('ACTUAL_URL', 
+                self.request.get('VIRTUAL_URL', 
+                    self.request.get('URL', 
+                        None)))
+    
+    @memoize
+    def _path_elements(self):
+        """Get the path to the object implied by the curren URL, as a list
+        of elements. Get None if it can't be calculated or it is not under
+        the current portal path.
+        """
+        url = self._url()
+        if not url:
+            return None
+        
+        try:
+            path = self.request.physicalPathFromURL(url)
+        except ValueError:
+            return None
+        
+        portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        portal_path = '/'.join(portal_state.portal().getPhysicalPath())
+        if not path.startswith(portal_path):
+            return None
+
+        path_elements = path.split('/')

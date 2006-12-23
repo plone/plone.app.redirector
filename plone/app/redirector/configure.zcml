@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+    <!-- Register a page for -->
+
+    <!-- Remember the movements of CMF objects -->
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.app.container.interfaces.IObjectMovedEvent"
+        handler=".subscribers.objectMoved"
+        />
+        
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.app.container.interfaces.IObjectRemovedEvent"
+        handler=".subscribers.objectReoved"
+        />
+
+</configure>
