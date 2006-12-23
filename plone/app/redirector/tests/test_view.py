@@ -14,18 +14,34 @@ class TestRedirectorView(RedirectorTestCase):
         return getUtility(IRedirectionStorage)
     
     def view(self, context, actual_url):
-        request = context.REQUEST
+        request = self.app.REQUEST
         request['ACTUAL_URL'] = actual_url
         return getMultiAdapter((context, request), name='plone_redirector_view')
         
     def test_attempt_redirect_with_known_url(self):
-        pass
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo', fp + '/bar')
+        view = self.view(self.portal, fu + '/foo')
+        self.assertEquals(True, view.attempt_redirect())
+        self.assertEquals(302, self.app.REQUEST.response.getStatus())
+        self.assertEquals(fu + '/bar', self.app.REQUEST.response.getHeader('location'))
+        
+    def test_attempt_redirect_with_known_url_and_template(self):
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo', fp + '/bar')
+        view = self.view(self.portal, fu + '/foo/view')
+        self.assertEquals(True, view.attempt_redirect())
+        self.assertEquals(302, self.app.REQUEST.response.getStatus())
+        self.assertEquals(fu + '/bar/view', self.app.REQUEST.response.getHeader('location'))
         
     def test_attempt_redirect_with_unknown_url(self):
-        pass
-        
-    def test_attempt_redirect_unauthorized(self):
-        pass
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '/foo')
+        self.assertEquals(False, view.attempt_redirect())
+        self.assertNotEquals(302, self.app.REQUEST.response.getStatus())
         
     def test_find_first_parent_found(self):
         pass

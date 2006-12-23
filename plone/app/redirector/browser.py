@@ -29,12 +29,26 @@ class FourOhFourView(BrowserView):
             return False
             
         try:
-            old_path = self.request.physicalPathFromURL(url)
+            old_path_elements = self.request.physicalPathFromURL(url)
         except ValueError:
             return False
         
         storage = getUtility(IRedirectionStorage)
+        
+        old_path = '/'.join(old_path_elements)
         new_path = storage.get(old_path)
+
+        if not new_path:
+            
+            # If the last part of the URL was a template name, say, look for
+            # the parent
+            
+            if len(old_path_elements) > 1:
+                old_path_parent = '/'.join(old_path_elements[:-1])
+                template_id = url.split('/')[-1]
+                new_path_parent = storage.get(old_path_parent)
+                if new_path_parent:
+                    new_path = new_path_parent + '/' + template_id
 
         if not new_path:
             return False
@@ -71,10 +85,10 @@ class FourOhFourView(BrowserView):
     def _url(self):
         """Get the current, canonical URL
         """
-        return self.request('ACTUAL_URL', 
-                self.request.get('VIRTUAL_URL', 
-                    self.request.get('URL', 
-                        None)))
+        return self.request.get('ACTUAL_URL',
+                 self.request.get('VIRTUAL_URL',
+                   self.request.get('URL', 
+                     None)))
     
     @memoize
     def _path_elements(self):
@@ -87,7 +101,7 @@ class FourOhFourView(BrowserView):
             return None
         
         try:
-            path = self.request.physicalPathFromURL(url)
+            path = '/'.join(self.request.physicalPathFromURL(url))
         except ValueError:
             return None
         
