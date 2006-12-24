@@ -7,18 +7,9 @@ from Products.CMFCore.utils import getToolByName
 
 from plone.app.redirector.interfaces import IFourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
+from plone.app.redirector.interfaces import IRedirectionPolicy
 
 from plone.memoize.instance import memoize
-
-IGNORE_IDS = ('index_html', 
-              'FrontPage', 
-              'folder_listing', 
-              'folder_contents', 
-              'view',
-              'edit',
-              'properties',
-              'sharing',
-              )
 
 class FourOhFourView(BrowserView):
     implements(IFourOhFourView)
@@ -74,10 +65,11 @@ class FourOhFourView(BrowserView):
         if not path_elements:
             return None
         path_elements.reverse()
-        
+        policy = IRedirectionPolicy(self.context)
+        ignore_ids = policy.ignore_ids
         portal_catalog = getToolByName(aq_inner(self.context), 'portal_catalog')
         for element in path_elements:
-            if element not in IGNORE_IDS:
+            if element not in ignore_ids:
                 result_set = portal_catalog(SearchableText=element, sort_limit=10)
                 if result_set:
                     return result_set[:10]

@@ -1,4 +1,11 @@
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
+
+class IRedirectionPolicy(Interface):
+    """An adapters that provides some policy about how redirects are performed
+    """
+    
+    ignore_ids = Attribute("A list of ids to ignore when examining a URL " 
+                            "for a potential redirection")
 
 class IFourOhFourView(Interface):
     """A view that supports a useful 404 page

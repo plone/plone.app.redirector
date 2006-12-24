@@ -24,7 +24,7 @@ class TestRedirectorView(RedirectorTestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo')
         self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(302, self.app.REQUEST.response.getStatus())
+        self.assertEquals(301, self.app.REQUEST.response.getStatus())
         self.assertEquals(fu + '/bar', self.app.REQUEST.response.getHeader('location'))
         
     def test_attempt_redirect_with_known_url_and_template(self):
@@ -33,7 +33,7 @@ class TestRedirectorView(RedirectorTestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/view')
         self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(302, self.app.REQUEST.response.getStatus())
+        self.assertEquals(301, self.app.REQUEST.response.getStatus())
         self.assertEquals(fu + '/bar/view', self.app.REQUEST.response.getHeader('location'))
         
     def test_attempt_redirect_with_unknown_url(self):
@@ -41,7 +41,7 @@ class TestRedirectorView(RedirectorTestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/foo')
         self.assertEquals(False, view.attempt_redirect())
-        self.assertNotEquals(302, self.app.REQUEST.response.getStatus())
+        self.assertNotEquals(301, self.app.REQUEST.response.getStatus())
         
     def test_find_first_parent_found_leaf(self):
         self.folder.invokeFactory('Folder', 'f1')
@@ -68,6 +68,18 @@ class TestRedirectorView(RedirectorTestCase):
         self.folder.f1.invokeFactory('Document', 'p2')
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f2/p1')
+        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        self.assertEquals(1, len(urls))
+        self.assertEquals(fu + '/f1/p1', urls[0])
+        
+    def test_search_ignore_ids(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        self.folder.invokeFactory('Folder', 'f2')
+        self.folder.f1.invokeFactory('Document', 'p1')
+        self.folder.f1.invokeFactory('Document', 'p2')
+        self.folder.f1.invokeFactory('Document', 'p3', title='view')
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '/f2/p1/view ')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEquals(1, len(urls))
         self.assertEquals(fu + '/f1/p1', urls[0])
