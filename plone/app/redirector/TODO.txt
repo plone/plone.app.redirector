@@ -1,6 +1,0 @@
-plone.app.redirector to-do
-
- - finish tests in tests_view.py
-
- - make default_error_message.pt in CMFPlone use @@plone_redirector_view
-    - alternatively, use a view on NotFound exception (possibly dangerous)
