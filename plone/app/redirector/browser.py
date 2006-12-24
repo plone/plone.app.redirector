@@ -54,7 +54,7 @@ class FourOhFourView(BrowserView):
             return False
             
         url = self.request.physicalPathToURL(new_path)
-        self.request.response.redirect(url)
+        self.request.response.redirect(url, status=301, lock=1)
         return True
 
     def find_first_parent(self):
@@ -78,9 +78,9 @@ class FourOhFourView(BrowserView):
         portal_catalog = getToolByName(aq_inner(self.context), 'portal_catalog')
         for element in path_elements:
             if element not in IGNORE_IDS:
-                result_set = portal_catalog(SearchableText=element)
+                result_set = portal_catalog(SearchableText=element, sort_limit=10)
                 if result_set:
-                    return result_set
+                    return result_set[:10]
         return []
         
     @memoize
