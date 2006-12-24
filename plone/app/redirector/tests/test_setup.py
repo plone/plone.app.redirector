@@ -7,7 +7,7 @@ from zope.component import queryUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 
 class TestRedirectorSetup(RedirectorTestCase):
-    """Ensure that the redirector view behaves as expected.
+    """Ensure that the basic redirector setup is successful.
     """
     
     def test_utility(self):

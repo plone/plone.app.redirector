@@ -94,7 +94,7 @@ class FourOhFourView(BrowserView):
     
     @memoize
     def _path_elements(self):
-        """Get the path to the object implied by the curren URL, as a list
+        """Get the path to the object implied by the current URL, as a list
         of elements. Get None if it can't be calculated or it is not under
         the current portal path.
         """

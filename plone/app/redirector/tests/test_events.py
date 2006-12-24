@@ -8,7 +8,7 @@ from zope.component import getUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 
 class TestRedirectorEvents(RedirectorTestCase):
-    """Ensure that the redirector view behaves as expected.
+    """Ensure that the redirector event subscribers behave as expected.
     """
         
     @property
