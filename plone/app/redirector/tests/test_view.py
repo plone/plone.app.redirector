@@ -79,7 +79,7 @@ class TestRedirectorView(RedirectorTestCase):
         self.folder.f1.invokeFactory('Document', 'p2')
         self.folder.f1.invokeFactory('Document', 'p3', title='view')
         fu = self.folder.absolute_url()
-        view = self.view(self.portal, fu + '/f2/p1/view ')
+        view = self.view(self.portal, fu + '/f2/p1/view')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEquals(1, len(urls))
         self.assertEquals(fu + '/f1/p1', urls[0])
