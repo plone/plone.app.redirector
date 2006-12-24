@@ -140,7 +140,6 @@ class RedirectionStorage(Persistent):
         
     def remove(self, old_path):
         old_path = self._canonical(old_path)
-
         new_path = self._paths.get(old_path, None)
         if new_path is not None and self._rpaths.has_key(new_path):
             if len(self._rpaths[new_path]) == 1:
