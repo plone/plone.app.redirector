@@ -7,7 +7,9 @@ setup(name='plone.app.redirector',
       version=version,
       description="redirection tool",
       long_description="""\
-bring dead links back to life!""",
+Bring dead links back to life! plone.app.redirector knows where your content
+used to be and can bring you to its new location when content moves.
+""",
       classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       keywords='',
       author='Martin Aspeli, based on work by Helge Tesdal and Whit Morriss',
