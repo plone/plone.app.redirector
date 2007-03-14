@@ -3,7 +3,7 @@ from zope.component import getUtility, getMultiAdapter
 
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import ICatalogTool
 
 from plone.app.redirector.interfaces import IFourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
@@ -67,7 +67,7 @@ class FourOhFourView(BrowserView):
         path_elements.reverse()
         policy = IRedirectionPolicy(self.context)
         ignore_ids = policy.ignore_ids
-        portal_catalog = getToolByName(aq_inner(self.context), 'portal_catalog')
+        portal_catalog = getUtility(ICatalogTool)
         for element in path_elements:
             if element not in ignore_ids:
                 result_set = portal_catalog(SearchableText=element, sort_limit=10)
