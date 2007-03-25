@@ -102,6 +102,36 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.assertEquals(self.storage.get(fp + '/f1'), fp + '/f2/f1')
         self.assertEquals(self.storage.get(fp + '/f1/p1'), fp + '/f2/f1/p1')
         self.assertEquals(self.storage.get(fp + '/f1/p2'), fp + '/f2/f1/p2')
+        
+    def test_rename_updates_parent_and_children_deep(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        self.folder.f1.invokeFactory('Folder', 'f11')
+        self.folder.f1.f11.invokeFactory('Document', 'p1')
+        self.folder.f1.f11.invokeFactory('Document', 'p2')
+        transaction.savepoint(1)
+        self.folder.manage_renameObject('f1', 'f2a')
+        
+        fp = '/'.join(self.folder.getPhysicalPath())
+        self.assertEquals(self.storage.get(fp + '/f1'), fp + '/f2a')
+        self.assertEquals(self.storage.get(fp + '/f1/f11'), fp + '/f2a/f11')
+        self.assertEquals(self.storage.get(fp + '/f1/f11/p1'), fp + '/f2a/f11/p1')
+        self.assertEquals(self.storage.get(fp + '/f1/f11/p2'), fp + '/f2a/f11/p2')
+        
+    def test_cut_paste_updates_parent_and_children_deep(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        self.folder.invokeFactory('Folder', 'f2a')
+        self.folder.f1.invokeFactory('Folder', 'f11')
+        self.folder.f1.f11.invokeFactory('Document', 'p1')
+        self.folder.f1.f11.invokeFactory('Document', 'p2')
+        transaction.savepoint(1)
+        cp = self.folder.manage_cutObjects(ids=('f1',))
+        self.folder.f2a.manage_pasteObjects(cp)
+        
+        fp = '/'.join(self.folder.getPhysicalPath())
+        self.assertEquals(self.storage.get(fp + '/f1'), fp + '/f2a/f1')
+        self.assertEquals(self.storage.get(fp + '/f1/f11'), fp + '/f2a/f1/f11')
+        self.assertEquals(self.storage.get(fp + '/f1/f11/p1'), fp + '/f2a/f1/f11/p1')
+        self.assertEquals(self.storage.get(fp + '/f1/f11/p2'), fp + '/f2a/f1/f11/p2')
 
 def test_suite():
     suite = unittest.TestSuite()
