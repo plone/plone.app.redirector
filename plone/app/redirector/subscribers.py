@@ -1,23 +1,23 @@
 from zope.component import queryUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 
-# XXX: If we wanted to, we could try to keep aliases for children as well.
-# For example, if /foo is moved to /bar, /foo/one/two/three should redirect
-# to /bar/one/two/three... However, building the redirects like that may be
-# quite complicated and expensive.
-
-# Note that by accident, /foo/one will work, but /foo/one/two will not work.
-# This is because the redirect view will attempt to use the implied parent
-# when you try something like /foo/document_view to get /bar/document_view.
+from Acquisition import aq_base
 
 def objectMoved(obj, event):
     """Tell the redirection storage that an object moved
     """
     # Unfortunately, IObjectMoved is a rather generic event...
-    if event.oldParent is not None and event.newParent is not None:
+    if event.oldParent is not None and event.newParent is not None and event.oldName is not None:
         storage = queryUtility(IRedirectionStorage)
         if storage is not None:
             old_path = "%s/%s" % ('/'.join(event.oldParent.getPhysicalPath()), event.oldName,)
+            
+            # This event gets redispatched to children, and we should keep track of them as well
+            # In this case, event.object is not the same as obj, and the old_path should actually
+            # include obj.id
+            
+            if aq_base(event.object) is not aq_base(obj):
+                old_path = "%s/%s" % (old_path, obj.getId(),)
             
             # XXX: Special case - don't remember anything happening inside portal_factory
             if '/portal_factory/' in old_path:

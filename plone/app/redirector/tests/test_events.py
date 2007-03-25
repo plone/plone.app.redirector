@@ -76,15 +76,8 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.folder._delObject('f1')
         
         self.assertEquals(self.storage.get(fp + '/f1/p1'), None)
-        
-    # XXX: These tests are disabled because OFS does not fire events for
-    # children when a folder is renamed or moved. This means that our
-    # redirection storage is not able to find sub-objects when they move.
-    
-    # We could get around this by recursing in subscribers.py, at a 
-    # performance hit.
-        
-    def _DISABLED_test_rename_updates_parent_and_children(self):
+                
+    def test_rename_updates_parent_and_children(self):
         self.folder.invokeFactory('Folder', 'f1')
         self.folder.f1.invokeFactory('Document', 'p1')
         self.folder.f1.invokeFactory('Document', 'p2')
@@ -96,7 +89,7 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.assertEquals(self.storage.get(fp + '/f1/p1'), fp + '/f2/p1')
         self.assertEquals(self.storage.get(fp + '/f1/p2'), fp + '/f2/p2')
         
-    def _DISABLED_test_cut_paste_updates_parent_and_children(self):
+    def test_cut_paste_updates_parent_and_children(self):
         self.folder.invokeFactory('Folder', 'f1')
         self.folder.invokeFactory('Folder', 'f2')
         self.folder.f1.invokeFactory('Document', 'p1')

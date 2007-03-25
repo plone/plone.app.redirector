@@ -151,9 +151,11 @@ class RedirectionStorage(Persistent):
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
         for p in self._rpaths.get(new_path, []):
-            del self._paths[p]
+            if p in self._paths:
+                del self._paths[p]
         if self._rpaths.has_key(new_path):
-            del self._rpaths[new_path]
+            if new_path in self._rpaths:
+                del self._rpaths[new_path]
 
     def has_path(self, old_path):
         old_path = self._canonical(old_path)
