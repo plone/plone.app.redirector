@@ -21,4 +21,5 @@ class RedirectionPolicy(object):
                   'edit',
                   'properties',
                   'sharing',
+                  '+', # IAdding view
                   )
