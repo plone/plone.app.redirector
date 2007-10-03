@@ -75,3 +75,6 @@ class IRedirectionStorage(Interface):
         
         Will return an empty list if nothing redirects to new_path.
         """
+
+    def __iter__():
+        """Iterate over all existing paths."""

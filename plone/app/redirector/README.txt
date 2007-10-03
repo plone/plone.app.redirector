@@ -30,3 +30,17 @@ default_error_message.pt when it gets a NotFound error) that do the following:
  - further, use the last id of the assumed intended path and attempt to search
    for objects in the catalog that contain this, presenting the options to the
    user
+
+=======
+History
+=======
+
+1.0.1
+
+    - Added __iter__ function to storage which iterates over all paths.
+      [fschulze]
+
+1.0
+
+    - Initial release.
+      [optilude]

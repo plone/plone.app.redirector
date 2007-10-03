@@ -107,6 +107,23 @@ class RedirectionStorage(Persistent):
         False
         >>> p.redirects('/wilma')
         []
+
+    We can get an iterator over all existing paths
+
+        >>> iter(p)
+        <OO-iterator object at ...>
+        >>> sorted(p)
+        ['/baz']
+
+    Now add some more
+
+        >>> p.add('/foo', '/bar')
+        >>> p.add('/barney', '/wilma')
+        >>> sorted(p)
+        ['/barney', '/baz', '/foo', '/fred']
+
+    XXX /fred came back, because it's still in _rpaths, is that intended?
+
     """
         
     implements(IRedirectionStorage)
@@ -173,3 +190,6 @@ class RedirectionStorage(Persistent):
         if path.endswith('/'):
             path = path[:-1]
         return path
+
+    def __iter__(self):
+        return iter(self._paths)
