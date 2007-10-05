@@ -89,7 +89,19 @@ class RedirectionStorage(Persistent):
     Update a redirect in a chain
     
         >>> p.add('/fred', '/foo')
+        >>> p.get('/fred')
+        '/foo'
+        >>> sorted(p.redirects('/foo'))
+        ['/fred']
+
         >>> p.add('/fred', '/barney')
+        >>> p.get('/fred')
+        '/barney'
+        >>> sorted(p.redirects('/foo'))
+        []
+        >>> sorted(p.redirects('/barney'))
+        ['/fred']
+
         >>> p.add('/barney', '/wilma')
         >>> p.get('/fred')
         '/wilma'
@@ -97,7 +109,9 @@ class RedirectionStorage(Persistent):
         '/wilma'
         >>> sorted(p.redirects('/wilma'))
         ['/barney', '/fred']
-        
+        >>> sorted(p.redirects('/barney'))
+        []
+
     Destroy the target of a redirect
     
         >>> p.destroy('/wilma')
@@ -120,10 +134,7 @@ class RedirectionStorage(Persistent):
         >>> p.add('/foo', '/bar')
         >>> p.add('/barney', '/wilma')
         >>> sorted(p)
-        ['/barney', '/baz', '/foo', '/fred']
-
-    XXX /fred came back, because it's still in _rpaths, is that intended?
-
+        ['/barney', '/baz', '/foo']
     """
         
     implements(IRedirectionStorage)
@@ -151,6 +162,10 @@ class RedirectionStorage(Persistent):
         for p in self.redirects(old_path):
             self._paths[p] = new_path
             self._rpaths.setdefault(new_path, OOSet()).insert(p)
+
+        # Remove reverse paths for old_path
+        if old_path in self._rpaths:
+            del self._rpaths[old_path]
         
         self._paths[old_path] = new_path
         self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
