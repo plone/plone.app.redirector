@@ -67,11 +67,13 @@ class FourOhFourView(BrowserView):
         path_elements.reverse()
         policy = IRedirectionPolicy(self.context)
         ignore_ids = policy.ignore_ids
-        portal_catalog = getToolByName(aq_inner(self.context), "portal_catalog")
+        portal_catalog = getToolByName(self.context, "portal_catalog")
         portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        navroot = portal_state.navigation_root_path()
         for element in path_elements:
             if element not in ignore_ids:
                 result_set = portal_catalog(SearchableText=element, 
+                                            path = navroot,
                                             portal_type=portal_state.friendly_types(),
                                             sort_limit=10)
                 if result_set:

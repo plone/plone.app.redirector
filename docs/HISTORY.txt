@@ -1,9 +1,25 @@
-Changelog for plone.app.redirector
+Changelog
+=========
 
-    (name of developer listed in brackets)
+1.0.3 - UNRELEASED
+------------------
 
-plone.app.redirector - 0.1 Unreleased
+- Start searches for missing items in the navigation root instead of the site
+  root.
+  [wichert]
 
-    - Initial package structure.
-      [zopeskel]
+1.0.2 - October 8, 2007
+-----------------------
 
+- also ignore ids from views.
+  [ldr]
+
+
+- Added __iter__ function to storage which iterates over all paths.
+  [fschulze]
+
+1.0 - August 17, 2007
+---------------------
+
+- Initial release.
+  [optilude]
