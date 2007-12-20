@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
-import sys, os
 
 version = '1.0.3'
 
 setup(name='plone.app.redirector',
       version=version,
       description="redirection tool",
-      long_description="""\
-Bring dead links back to life! plone.app.redirector knows where your content
-used to be and can bring you to its new location when content moves.
-""",
-      classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      long_description=open("README.txt").read(),
+      classifiers=[
+          "Framework :: Plone",
+          "Framework :: Zope2",
+          "Programming Language :: Python",
+          ], 
       keywords='',
       author='Martin Aspeli, based on work by Helge Tesdal and Whit Morriss',
       author_email='plone-developers@lists.sourceforge.net',
@@ -22,8 +22,6 @@ used to be and can bring you to its new location when content moves.
       zip_safe=False,
       install_requires=[
         'setuptools',
+        'plone.memoize',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )

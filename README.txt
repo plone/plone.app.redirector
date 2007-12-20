@@ -1,9 +1,11 @@
-====================
-plone.app.redirector
-====================
+Introduction
+============
 
 by Martin Aspeli <optilude@gmx.net> based on work by Helge Tesdal 
 (RedirectionTool) and Whit Morriss (topp.rose).
+
+Bring dead links back to life! plone.app.redirector knows where your content
+used to be and can bring you to its new location when content moves.
 
 This component expects you to register storage.RedirectionStorage as a local
 utility providing IRedirectionStorage (CMFPlone does this). Once that's done,
