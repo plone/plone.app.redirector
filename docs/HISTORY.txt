@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.3 - UNRELEASED
+1.0.5 - January 3, 2007
 ------------------
 
 - Start searches for missing items in the navigation root instead of the site
