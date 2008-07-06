@@ -26,6 +26,11 @@ def objectMoved(obj, event):
             if '/portal_factory/' in old_path:
                 return
             
+            # Special case: don't remember object when it was just created...
+            if hasattr(aq_base(obj), 'checkCreationFlag') and \
+                    obj.checkCreationFlag() is False:
+                return
+
             storage.add(old_path, new_path)
         
 def objectRemoved(obj, event):
