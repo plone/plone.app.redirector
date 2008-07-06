@@ -133,6 +133,14 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.assertEquals(self.storage.get(fp + '/f1/f11/p1'), fp + '/f2a/f1/f11/p1')
         self.assertEquals(self.storage.get(fp + '/f1/f11/p2'), fp + '/f2a/f1/f11/p2')
 
+    def test_add_doesnt_create_storage_entry(self):
+        """ refers https://dev.plone.org/plone/ticket/8260 """
+        self.assertEqual(list(self.storage), [])
+        self.folder.invokeFactory('Document', 'p1')
+        transaction.savepoint(1)
+        self.assertEqual(list(self.storage), [])
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestRedirectorEvents))
