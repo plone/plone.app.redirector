@@ -4,7 +4,7 @@ PloneTestCase.setupPloneSite()
 
 class RedirectorTestCase(PloneTestCase.PloneTestCase):
     pass
-    
+
 class RedirectorFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     def getBrowser(self, loggedIn=True):

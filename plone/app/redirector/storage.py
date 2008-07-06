@@ -7,20 +7,20 @@ from plone.app.redirector.interfaces import IRedirectionStorage
 
 class RedirectionStorage(Persistent):
     """Stores old paths to new paths.
-    
-    Note - instead of storing "new paths" it could store object ids or 
-    similar. In general, there is a many-to-one relationship between 
-    "old paths" and "new paths". An "old path" points to exactly one 
+
+    Note - instead of storing "new paths" it could store object ids or
+    similar. In general, there is a many-to-one relationship between
+    "old paths" and "new paths". An "old path" points to exactly one
     "new path" (where the object is now to be found), but a "new path"
     can be pointed to by multiple different "old paths" (several objects
     that used to be distinct are now consolidated into one).
-    
+
     The following tests (see test_storage.py) demonstrate its usage.
-    
+
         >>> p = RedirectionStorage()
-    
+
     Add one redirect
-    
+
         >>> p.has_path('/foo')
         False
         >>> p.add('/foo', '/bar')
@@ -32,18 +32,18 @@ class RedirectionStorage(Persistent):
         False
         >>> p.redirects('/bar')
         ['/foo']
-        
+
     Note that trailing slashes are ignored:
-    
+
         >>> p.has_path('/foo/')
         True
         >>> p.get('/foo/')
         '/bar'
         >>> p.redirects('/bar/')
         ['/foo']
-    
+
     Circular references are ignored
-    
+
         >>> p.add('/circle', '/circle')
         >>> p.has_path('/circle')
         False
@@ -51,9 +51,9 @@ class RedirectionStorage(Persistent):
         '_marker_'
         >>> p.redirects('/circle')
         []
-    
+
     Add another redirect
-    
+
         >>> p.has_path('/baz')
         False
         >>> p.add('/baz', '/bar')
@@ -63,9 +63,9 @@ class RedirectionStorage(Persistent):
         '/bar'
         >>> sorted(p.redirects('/bar'))
         ['/baz', '/foo']
-        
+
     Update a redirect
-    
+
         >>> p.add('/foo', '/quux')
         >>> p.has_path('/foo')
         True
@@ -75,9 +75,9 @@ class RedirectionStorage(Persistent):
         ['/baz']
         >>> p.redirects('/quux')
         ['/foo']
-    
+
     Remove a redirect
-    
+
         >>> p.remove('/foo')
         >>> p.has_path('/foo')
         False
@@ -85,9 +85,9 @@ class RedirectionStorage(Persistent):
         '_notfound_'
         >>> p.redirects('/quux')
         []
-    
+
     Update a redirect in a chain
-    
+
         >>> p.add('/fred', '/foo')
         >>> p.get('/fred')
         '/foo'
@@ -113,7 +113,7 @@ class RedirectionStorage(Persistent):
         []
 
     Destroy the target of a redirect
-    
+
         >>> p.destroy('/wilma')
         >>> p.has_path('/barney')
         False
@@ -136,20 +136,20 @@ class RedirectionStorage(Persistent):
         >>> sorted(p)
         ['/barney', '/baz', '/foo']
     """
-        
+
     implements(IRedirectionStorage)
-    
+
     def __init__(self):
         self._paths = OOBTree()
         self._rpaths = OOBTree()
-    
+
     def add(self, old_path, new_path):
         old_path = self._canonical(old_path)
         new_path = self._canonical(new_path)
-        
+
         if old_path == new_path:
             return
-        
+
         # Forget any existing reverse paths to old_path
         existing_target = self._paths.get(old_path, None)
         if existing_target is not None and self._rpaths.has_key(existing_target):
@@ -157,7 +157,7 @@ class RedirectionStorage(Persistent):
                 del self._rpaths[existing_target]
             else:
                 self._rpaths[existing_target].remove(old_path)
-        
+
         # Update any references that pointed to old_path
         for p in self.redirects(old_path):
             self._paths[p] = new_path
@@ -166,10 +166,10 @@ class RedirectionStorage(Persistent):
         # Remove reverse paths for old_path
         if old_path in self._rpaths:
             del self._rpaths[old_path]
-        
+
         self._paths[old_path] = new_path
         self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
-        
+
     def remove(self, old_path):
         old_path = self._canonical(old_path)
         new_path = self._paths.get(old_path, None)
@@ -179,7 +179,7 @@ class RedirectionStorage(Persistent):
             else:
                 self._rpaths[new_path].remove(old_path)
         del self._paths[old_path]
-        
+
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
         for p in self._rpaths.get(new_path, []):

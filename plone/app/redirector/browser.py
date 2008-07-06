@@ -13,27 +13,27 @@ from plone.memoize.instance import memoize
 
 class FourOhFourView(BrowserView):
     implements(IFourOhFourView)
-    
+
     def attempt_redirect(self):
         url = self._url()
         if not url:
             return False
-            
+
         try:
             old_path_elements = self.request.physicalPathFromURL(url)
         except ValueError:
             return False
-        
+
         storage = getUtility(IRedirectionStorage)
-        
+
         old_path = '/'.join(old_path_elements)
         new_path = storage.get(old_path)
 
         if not new_path:
-            
+
             # If the last part of the URL was a template name, say, look for
             # the parent
-            
+
             if len(old_path_elements) > 1:
                 old_path_parent = '/'.join(old_path_elements[:-1])
                 template_id = url.split('/')[-1]
@@ -43,7 +43,7 @@ class FourOhFourView(BrowserView):
 
         if not new_path:
             return False
-            
+
         url = self.request.physicalPathToURL(new_path)
         self.request.response.redirect(url, status=301, lock=1)
         return True
@@ -72,23 +72,23 @@ class FourOhFourView(BrowserView):
         navroot = portal_state.navigation_root_path()
         for element in path_elements:
             if element not in ignore_ids:
-                result_set = portal_catalog(SearchableText=element, 
+                result_set = portal_catalog(SearchableText=element,
                                             path = navroot,
                                             portal_type=portal_state.friendly_types(),
                                             sort_limit=10)
                 if result_set:
                     return result_set[:10]
         return []
-        
+
     @memoize
     def _url(self):
         """Get the current, canonical URL
         """
         return self.request.get('ACTUAL_URL',
                  self.request.get('VIRTUAL_URL',
-                   self.request.get('URL', 
+                   self.request.get('URL',
                      None)))
-    
+
     @memoize
     def _path_elements(self):
         """Get the path to the object implied by the current URL, as a list
@@ -98,12 +98,12 @@ class FourOhFourView(BrowserView):
         url = self._url()
         if not url:
             return None
-        
+
         try:
             path = '/'.join(self.request.physicalPathFromURL(url))
         except ValueError:
             return None
-        
+
         portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
         portal_path = '/'.join(portal_state.portal().getPhysicalPath())
         if not path.startswith(portal_path):
