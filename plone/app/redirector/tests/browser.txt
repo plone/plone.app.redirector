@@ -1,0 +1,26 @@
+This test checks https://dev.plone.org/plone/ticket/8260, i.e. it makes sure
+no redirection entries are created when a content object gets instantiated:
+
+  >>> from zope.component import getUtility
+  >>> from plone.app.redirector.interfaces import IRedirectionStorage
+  >>> storage = getUtility(IRedirectionStorage)
+
+Initially the redirection storage should be empty:
+
+  >>> self.assertEqual(list(storage), [])
+
+Let's create an object an check again:
+
+  >>> self.setRoles(('Manager',))
+  >>> browser = self.getBrowser()
+  >>> browser.open('http://nohost/plone/')
+  >>> browser.getLink(url='/createObject?type_name=Document').click()
+  >>> browser.getControl('Title').value = 'Foo'
+  >>> browser.getControl('Save').click()
+  >>> browser.contents
+  '...Info...Changes saved...
+   ...documentFirstHeading...Foo...
+   ...This item does not have any body text, click the edit tab to change it...'
+
+  >>> self.assertEqual(list(storage), [])
+
