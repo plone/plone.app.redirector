@@ -1,5 +1,4 @@
 import unittest
-from Testing.ZopeTestCase import FunctionalDocFileSuite as Suite
 from plone.app.redirector.tests.base import RedirectorTestCase
 
 from zope.component import getUtility, getMultiAdapter
