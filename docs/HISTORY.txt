@@ -1,14 +1,14 @@
 Changelog
 =========
 
-1.0.8 - Unreleased
-------------------
+1.0.6 - July 7th, 2008
+----------------------
 
 - Fix unnecessary creation of redirection entries for newly created objects.
   [witsch]
 
-1.0.5 - January 3, 2007
-------------------
+1.0.5 - January 3, 2008
+-----------------------
 
 - Start searches for missing items in the navigation root instead of the site
   root.
