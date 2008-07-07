@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0.8 - July 7th, 2008
+-----------------------
+
+- Fix release confusion by ensuring we have a "late" version number. 
+Somewhere, someone created a 1.0.7. :-)
+  [optilude]
+
 1.0.6 - July 7th, 2008
 ----------------------
 
