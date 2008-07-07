@@ -1,11 +1,18 @@
 Changelog
 =========
 
+1.0.9 - Unreleased
+------------------
+
+- Fix for the fix regarding unnecessary creation of redirection entries for
+  newly created objects.
+  [witsch]
+
 1.0.8 - July 7th, 2008
 -----------------------
 
-- Fix release confusion by ensuring we have a "late" version number. 
-Somewhere, someone created a 1.0.7. :-)
+- Fix release confusion by ensuring we have a "late" version number.
+  Somewhere, someone created a 1.0.7. :-)
   [optilude]
 
 1.0.6 - July 7th, 2008
