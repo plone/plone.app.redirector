@@ -94,6 +94,17 @@ class TestRedirectorView(RedirectorTestCase):
         self.assertEquals(1, len(urls))
         self.assertEquals(fu + '/f1/p1', urls[0])
 
+    def test_search_parens(self):
+        self.folder.invokeFactory('Folder', 'f1')
+        self.folder.invokeFactory('Folder', 'f2')
+        self.folder.f1.invokeFactory('Document', 'p1')
+        self.folder.f1.invokeFactory('Document', 'p2')
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '/f2/p1/f3(')
+        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        self.assertEquals(1, len(urls))
+        self.assertEquals(fu + '/f1/p1', urls[0])
+
     def test_search_blacklisted(self):
         self.folder.invokeFactory('Folder', 'f1')
         self.folder.invokeFactory('Folder', 'f2')

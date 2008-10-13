@@ -4,6 +4,10 @@ Changelog
 1.0.9 - Unreleased
 ------------------
 
+- Added quotation marks around open and close parens.  This fixes
+  https://dev.plone.org/plone/ticket/8588
+  [MatthewWilkes]
+
 - Fix for the fix regarding unnecessary creation of redirection entries for
   newly created objects.
   [witsch]

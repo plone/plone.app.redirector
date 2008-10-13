@@ -71,6 +71,9 @@ class FourOhFourView(BrowserView):
         portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
         navroot = portal_state.navigation_root_path()
         for element in path_elements:
+            # Prevent parens being interpreted
+            element=element.replace('(', '"("')
+            element=element.replace(')', '")"')
             if element not in ignore_ids:
                 result_set = portal_catalog(SearchableText=element,
                                             path = navroot,
