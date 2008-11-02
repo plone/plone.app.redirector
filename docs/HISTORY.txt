@@ -4,6 +4,9 @@ Changelog
 1.0.9 - Unreleased
 ------------------
 
+- Fixed a test to be less dependent on the page rendering.
+  [hannosch]
+
 - Added quotation marks around open and close parens.  This fixes
   https://dev.plone.org/plone/ticket/8588
   [MatthewWilkes]

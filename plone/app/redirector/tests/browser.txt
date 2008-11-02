@@ -9,7 +9,7 @@ Initially the redirection storage should be empty:
 
   >>> self.assertEqual(list(storage), [])
 
-Let's create an object an check again:
+Let's create an object and check again:
 
   >>> self.setRoles(('Manager',))
   >>> browser = self.getBrowser()
@@ -20,7 +20,6 @@ Let's create an object an check again:
   >>> browser.contents
   '...Info...Changes saved...
    ...documentFirstHeading...Foo...
-   ...This item does not have any body text, click the edit tab to change it...'
 
   >>> self.assertEqual(list(storage), [])
 
