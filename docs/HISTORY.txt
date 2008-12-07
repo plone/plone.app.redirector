@@ -4,6 +4,9 @@ Changelog
 1.0.9 - Unreleased
 ------------------
 
+- Fixed tests to be independent of any default content.
+  [hannosch]
+
 - Fixed a test to be less dependent on the page rendering.
   [hannosch]
 

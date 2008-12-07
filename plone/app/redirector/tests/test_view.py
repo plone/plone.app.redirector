@@ -8,9 +8,11 @@ class TestRedirectorView(RedirectorTestCase):
     """Ensure that the redirector view behaves as expected.
     """
 
-    @property
-    def storage(self):
-        return getUtility(IRedirectionStorage)
+    def afterSetUp(self):
+        self.loginAsPortalOwner()
+        self.portal.invokeFactory('Folder', 'testfolder')
+        self.folder = self.portal.testfolder
+        self.storage = getUtility(IRedirectionStorage)
 
     def view(self, context, actual_url):
         request = self.app.REQUEST
