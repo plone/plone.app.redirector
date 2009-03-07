@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.9 - Unreleased
-------------------
+1.0.10 - 2009-03-07
+-------------------
 
 - Fixed tests to be independent of any default content.
   [hannosch]
@@ -10,9 +10,12 @@ Changelog
 - Fixed a test to be less dependent on the page rendering.
   [hannosch]
 
-- Added quotation marks around open and close parens.  This fixes
-  https://dev.plone.org/plone/ticket/8588
+- Added quotation marks around open and close parens. This fixes
+  http://dev.plone.org/plone/ticket/8588.
   [MatthewWilkes]
+
+1.0.9 - 2008-07-07
+------------------
 
 - Fix for the fix regarding unnecessary creation of redirection entries for
   newly created objects.
