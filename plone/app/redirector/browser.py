@@ -1,3 +1,5 @@
+from urllib import unquote
+
 from zope.interface import implements
 from zope.component import getUtility, getMultiAdapter
 
@@ -36,7 +38,7 @@ class FourOhFourView(BrowserView):
 
             if len(old_path_elements) > 1:
                 old_path_parent = '/'.join(old_path_elements[:-1])
-                template_id = url.split('/')[-1]
+                template_id = unquote(url.split('/')[-1])
                 new_path_parent = storage.get(old_path_parent)
                 if new_path_parent:
                     new_path = new_path_parent + '/' + template_id

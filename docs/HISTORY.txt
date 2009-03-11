@@ -3,7 +3,9 @@ Changelog
 
 1.0.11 - unreleased
 -------------------
-
+- Fixed a bug which caused URLs with %-escaped sequences to grow extra %25s upon
+  redirect.
+  [erikrose]
 
 1.0.10 - 2009-03-07
 -------------------
