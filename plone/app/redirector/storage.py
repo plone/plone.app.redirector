@@ -5,6 +5,7 @@ from BTrees.OOBTree import OOBTree, OOSet
 
 from plone.app.redirector.interfaces import IRedirectionStorage
 
+
 class RedirectionStorage(Persistent):
     """Stores old paths to new paths.
 
@@ -122,6 +123,75 @@ class RedirectionStorage(Persistent):
         >>> p.redirects('/wilma')
         []
 
+    What about three step circular rename ?
+
+    Add first redirect.
+
+        >>> p.add('first', 'second')
+
+    There is only one redirect.
+
+        >>> p.get('first')
+        'second'
+        >>> p.get('second')
+        >>> p.get('third')
+
+    There is one back reference.
+
+        >>> p.redirects('first')
+        []
+        >>> p.redirects('second')
+        ['first']
+        >>> p.redirects('third')
+        []
+
+    Add second redirect.
+
+        >>> p.add('second', 'third')
+
+    There are now two.
+
+        >>> p.get('first')
+        'third'
+        >>> p.get('second')
+        'third'
+        >>> p.get('third')
+
+    There are two back references as well.
+
+        >>> p.redirects('first')
+        []
+        >>> p.redirects('second')
+        []
+        >>> p.redirects('third')
+        ['first', 'second']
+
+    Add third redirect, CIRCULAR.
+
+        >>> p.add('third', 'first')
+
+    There are still only two redirects.
+
+        >>> p.get('first')
+        >>> p.get('second')
+        'first'
+        >>> p.get('third')
+        'first'
+
+    And same for the back references.
+
+        >>> p.redirects('first')
+        ['second', 'third']
+        >>> p.redirects('second')
+        []
+        >>> p.redirects('third')
+        []
+
+    Cleanup after circular
+
+        >>> p.remove('second')
+        >>> p.remove('third')
+
     We can get an iterator over all existing paths
 
         >>> iter(p)
@@ -152,7 +222,8 @@ class RedirectionStorage(Persistent):
 
         # Forget any existing reverse paths to old_path
         existing_target = self._paths.get(old_path, None)
-        if existing_target is not None and self._rpaths.has_key(existing_target):
+        if (existing_target is not None) and (
+            self._rpaths.has_key(existing_target)):
             if len(self._rpaths[existing_target]) == 1:
                 del self._rpaths[existing_target]
             else:
@@ -160,8 +231,11 @@ class RedirectionStorage(Persistent):
 
         # Update any references that pointed to old_path
         for p in self.redirects(old_path):
-            self._paths[p] = new_path
-            self._rpaths.setdefault(new_path, OOSet()).insert(p)
+            if p <> new_path:
+                self._paths[p] = new_path
+                self._rpaths.setdefault(new_path, OOSet()).insert(p)
+            else:
+                del self._paths[new_path]
 
         # Remove reverse paths for old_path
         if old_path in self._rpaths:
