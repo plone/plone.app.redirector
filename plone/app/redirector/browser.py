@@ -13,6 +13,11 @@ from plone.app.redirector.interfaces import IRedirectionPolicy
 
 from plone.memoize.instance import memoize
 
+import logging
+
+logger = logging.getLogger('plone.app.redirector')
+
+
 class FourOhFourView(BrowserView):
     implements(IFourOhFourView)
 
@@ -40,7 +45,12 @@ class FourOhFourView(BrowserView):
                 old_path_parent = '/'.join(old_path_elements[:-1])
                 template_id = unquote(url.split('/')[-1])
                 new_path_parent = storage.get(old_path_parent)
-                if new_path_parent:
+                if new_path_parent == old_path_parent:
+                    logger.warning("source and target are equal : [%s]"
+                         % new_path_parent)
+                    logger.warning("for more info, see "
+                        "https://dev.plone.org/plone/ticket/8840")
+                if new_path_parent and new_path_parent <> old_path_parent:
                     new_path = new_path_parent + '/' + template_id
 
         if not new_path:
@@ -54,7 +64,8 @@ class FourOhFourView(BrowserView):
         path_elements = self._path_elements()
         if not path_elements:
             return None
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
+             name='plone_portal_state')
         portal = portal_state.portal()
         for i in range(len(path_elements)-1, 0, -1):
             obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
@@ -70,7 +81,8 @@ class FourOhFourView(BrowserView):
         policy = IRedirectionPolicy(self.context)
         ignore_ids = policy.ignore_ids
         portal_catalog = getToolByName(self.context, "portal_catalog")
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
+             name='plone_portal_state')
         navroot = portal_state.navigation_root_path()
         for element in path_elements:
             # Prevent parens being interpreted
@@ -78,9 +90,9 @@ class FourOhFourView(BrowserView):
             element=element.replace(')', '")"')
             if element not in ignore_ids:
                 result_set = portal_catalog(SearchableText=element,
-                                            path = navroot,
-                                            portal_type=portal_state.friendly_types(),
-                                            sort_limit=10)
+                    path = navroot,
+                    portal_type=portal_state.friendly_types(),
+                    sort_limit=10)
                 if result_set:
                     return result_set[:10]
         return []
@@ -109,7 +121,8 @@ class FourOhFourView(BrowserView):
         except ValueError:
             return None
 
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request), name='plone_portal_state')
+        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
+            name='plone_portal_state')
         portal_path = '/'.join(portal_state.portal().getPhysicalPath())
         if not path.startswith(portal_path):
             return None
