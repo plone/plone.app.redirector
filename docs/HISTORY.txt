@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.11 - unreleased
+1.0.11 - 2009-04-05
 -------------------
 
 - Fixed multiple steps circular references #8840
