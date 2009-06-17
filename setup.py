@@ -8,7 +8,6 @@ setup(name='plone.app.redirector',
       long_description=open("README.txt").read(),
       classifiers=[
           "Framework :: Plone",
-          "Framework :: Zope2",
           "Programming Language :: Python",
           ], 
       keywords='',

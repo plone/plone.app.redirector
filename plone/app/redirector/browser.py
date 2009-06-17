@@ -1,7 +1,7 @@
 from urllib import unquote
 
 from zope.interface import implements
-from zope.component import getUtility, getMultiAdapter
+from zope.component import queryUtility, getMultiAdapter
 
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
@@ -31,7 +31,9 @@ class FourOhFourView(BrowserView):
         except ValueError:
             return False
 
-        storage = getUtility(IRedirectionStorage)
+        storage = queryUtility(IRedirectionStorage)
+        if storage is None:
+            return False
 
         old_path = '/'.join(old_path_elements)
         new_path = storage.get(old_path)

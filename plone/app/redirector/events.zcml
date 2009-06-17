@@ -1,0 +1,17 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope">
+
+    <!-- Remember the movements of CMF objects -->
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.app.container.interfaces.IObjectMovedEvent"
+        handler=".subscribers.objectMoved"
+        />
+
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.app.container.interfaces.IObjectRemovedEvent"
+        handler=".subscribers.objectRemoved"
+        />
+
+</configure>

@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.0.12 - UNRELEASED
+-------------------
+
+- Move event subscribers to a separate zcml file so they can easily be
+  excluded.
+  [wichert]
+  
+- Update browser view to handle environments where the storage utility is not
+  availbale.
+  [wichert]
+
+
 1.0.11 - 2009-04-05
 -------------------
 

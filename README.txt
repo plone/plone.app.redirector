@@ -23,13 +23,13 @@ When an object is deleted, all references to it are deleted as well.
 The view in browser.py contains methods (used in Plone's 
 default_error_message.pt when it gets a NotFound error) that do the following:
 
- - attempt to redirect from the assumed intended path to the new path of an
-   object, if the redirection storage holds a reference from the old path.
-   
- - if not, look for the first valid parent of the assumed intended path, and
-   present it as an option to the user
+- attempt to redirect from the assumed intended path to the new path of an
+  object, if the redirection storage holds a reference from the old path.
+  
+- if not, look for the first valid parent of the assumed intended path, and
+  present it as an option to the user
 
- - further, use the last id of the assumed intended path and attempt to search
-   for objects in the catalog that contain this, presenting the options to the
-   user
+- further, use the last id of the assumed intended path and attempt to search
+  for objects in the catalog that contain this, presenting the options to the
+  user
 
