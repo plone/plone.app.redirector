@@ -11,7 +11,7 @@ class IFourOhFourView(Interface):
     """A view that supports a useful 404 page
     """
 
-    def attempt_redirect(self):
+    def attempt_redirect():
         """Attempt to find a single appropriate redirection target by
         investigating the request.
 
@@ -19,7 +19,7 @@ class IFourOhFourView(Interface):
         True. Else, do nothing and return False.
         """
 
-    def find_first_parent(self):
+    def find_first_parent():
         """Look at the URL given, and attempt to translate it into a partial
         path. Find the first "parent" of the attempted path that is an actual
         object and return it.
@@ -27,7 +27,7 @@ class IFourOhFourView(Interface):
         Returns None if no object could be found.
         """
 
-    def search_for_similar(self):
+    def search_for_similar():
         """Look at the URL given, and attempt to translate it into a partial
         path. Take the id of the requested object (as it would be), and look
         for other objects in the catalog with a SearchableText containing

@@ -4,6 +4,9 @@ Changelog
 1.0.12 - UNRELEASED
 -------------------
 
+- Fix bad calling convention in IFourOhFourView definition.
+  [wichert]
+
 - Move event subscribers to a separate zcml file so they can easily be
   excluded.
   [wichert]
