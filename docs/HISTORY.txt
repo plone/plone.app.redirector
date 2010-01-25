@@ -1,9 +1,12 @@
 Changelog
 =========
 
-1.0.13 - UNRELEASED
+1.0.13 - 2010-01-25
 -------------------
 
+- Added optional support for the getRedirectionAllowedForTypes method of
+  Products.RedirectionTool.
+  [hannosch]
 
 1.0.12 - 2009-06-17
 -------------------
@@ -18,7 +21,6 @@ Changelog
 - Update browser view to handle environments where the storage utility is not
   availbale.
   [wichert]
-
 
 1.0.11 - 2009-04-05
 -------------------
