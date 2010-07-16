@@ -5,7 +5,8 @@ version = '1.0.14'
 setup(name='plone.app.redirector',
       version=version,
       description="redirection tool",
-      long_description=open("README.txt").read(),
+      long_description=open("README.txt").read() + "\n" +
+                       open("CHANGES.txt").read(),
       classifiers=[
           "Framework :: Plone",
           "Programming Language :: Python",
