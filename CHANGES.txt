@@ -4,6 +4,8 @@ Changelog
 1.1.1 - unreleased
 ------------------
 
+- Gracefully handle errors parsing the SearchableText query on the 404 view.
+  [davisagli]
 
 1.1 - 2010-07-18
 ----------------

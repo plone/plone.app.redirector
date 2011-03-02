@@ -115,6 +115,13 @@ class TestRedirectorView(RedirectorTestCase):
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEquals(1, len(urls))
         self.assertEquals(fu + '/f1/p1', urls[0])
+    
+    def test_search_query_parser_error(self):
+        view = self.view(self.portal, self.portal.absolute_url() + '/&')
+        try:
+            urls = view.search_for_similar()
+        except:
+            self.fail('Query parsing error was not handled.')
 
     def test_search_blacklisted(self):
         self.folder.invokeFactory('Folder', 'f1')

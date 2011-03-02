@@ -6,6 +6,7 @@ from zope.component import queryUtility, getMultiAdapter
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
+from Products.ZCTextIndex.ParseTree import QueryError, ParseError
 
 from plone.app.redirector.interfaces import IFourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
@@ -91,12 +92,16 @@ class FourOhFourView(BrowserView):
             element=element.replace('(', '"("')
             element=element.replace(')', '")"')
             if element not in ignore_ids:
-                result_set = portal_catalog(SearchableText=element,
-                    path = navroot,
-                    portal_type=portal_state.friendly_types(),
-                    sort_limit=10)
-                if result_set:
-                    return result_set[:10]
+                try:
+                    result_set = portal_catalog(SearchableText=element,
+                        path = navroot,
+                        portal_type=portal_state.friendly_types(),
+                        sort_limit=10)
+                    if result_set:
+                        return result_set[:10]
+                except (QueryError, ParseError):
+                    # ignore if the element can't be parsed as a text query
+                    pass
         return []
 
     @memoize
