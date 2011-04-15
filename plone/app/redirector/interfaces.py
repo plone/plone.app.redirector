@@ -1,11 +1,13 @@
 from zope.interface import Interface, Attribute
 
+
 class IRedirectionPolicy(Interface):
     """An adapters that provides some policy about how redirects are performed
     """
 
     ignore_ids = Attribute("A list of ids to ignore when examining a URL "
                             "for a potential redirection")
+
 
 class IFourOhFourView(Interface):
     """A view that supports a useful 404 page
@@ -35,6 +37,7 @@ class IFourOhFourView(Interface):
         "parent" as per the attempted path, and so on. If the portal root
         is reached, return an empty list.
         """
+
 
 class IRedirectionStorage(Interface):
     """A storage for items where the old and the new location are known.

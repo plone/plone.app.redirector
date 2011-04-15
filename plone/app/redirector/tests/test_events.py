@@ -6,6 +6,7 @@ from plone.app.redirector.tests.base import RedirectorTestCase
 from zope.component import getUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 
+
 class TestRedirectorEvents(RedirectorTestCase):
     """Ensure that the redirector event subscribers behave as expected.
     """
@@ -27,7 +28,7 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.folder.invokeFactory('Document', 'p1')
         self.folder.invokeFactory('Document', 'p2')
         transaction.savepoint(1)
-        cp = self.folder.manage_cutObjects(ids=('p1', 'p2',))
+        cp = self.folder.manage_cutObjects(ids=('p1', 'p2'))
         self.folder.f1.manage_pasteObjects(cp)
 
         fp = '/'.join(self.folder.getPhysicalPath())
@@ -39,7 +40,7 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.folder.invokeFactory('Document', 'p1')
         self.folder.invokeFactory('Document', 'p2')
         transaction.savepoint(1)
-        cp = self.folder.manage_cutObjects(ids=('p1', 'p2',))
+        cp = self.folder.manage_cutObjects(ids=('p1', 'p2'))
         self.folder.f1.manage_pasteObjects(cp)
         transaction.savepoint(1)
         self.folder.f1.manage_renameObject('p2', 'p3')
@@ -94,7 +95,7 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.folder.f1.invokeFactory('Document', 'p1')
         self.folder.f1.invokeFactory('Document', 'p2')
         transaction.savepoint(1)
-        cp = self.folder.manage_cutObjects(ids=('f1',))
+        cp = self.folder.manage_cutObjects(ids=('f1', ))
         self.folder.f2.manage_pasteObjects(cp)
 
         fp = '/'.join(self.folder.getPhysicalPath())
@@ -123,7 +124,7 @@ class TestRedirectorEvents(RedirectorTestCase):
         self.folder.f1.f11.invokeFactory('Document', 'p1')
         self.folder.f1.f11.invokeFactory('Document', 'p2')
         transaction.savepoint(1)
-        cp = self.folder.manage_cutObjects(ids=('f1',))
+        cp = self.folder.manage_cutObjects(ids=('f1', ))
         self.folder.f2a.manage_pasteObjects(cp)
 
         fp = '/'.join(self.folder.getPhysicalPath())

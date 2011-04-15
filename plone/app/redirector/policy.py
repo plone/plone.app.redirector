@@ -3,6 +3,7 @@ from zope.component import adapts
 
 from plone.app.redirector.interfaces import IRedirectionPolicy
 
+
 class RedirectionPolicy(object):
     implements(IRedirectionPolicy)
     adapts(Interface)

@@ -4,6 +4,7 @@ from plone.app.redirector.tests.base import RedirectorTestCase
 from zope.component import getUtility, getMultiAdapter
 from plone.app.redirector.interfaces import IRedirectionStorage
 
+
 class TestRedirectorView(RedirectorTestCase):
     """Ensure that the redirector view behaves as expected.
     """
@@ -134,6 +135,7 @@ class TestRedirectorView(RedirectorTestCase):
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEquals(1, len(urls))
         self.assertEquals(fu + '/f2', urls[0])
+
 
 def test_suite():
     suite = unittest.TestSuite()

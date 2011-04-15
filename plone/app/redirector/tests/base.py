@@ -2,8 +2,10 @@ from Products.Five.testbrowser import Browser
 from Products.PloneTestCase import PloneTestCase
 PloneTestCase.setupPloneSite()
 
+
 class RedirectorTestCase(PloneTestCase.PloneTestCase):
     pass
+
 
 class RedirectorFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
@@ -15,4 +17,3 @@ class RedirectorFunctionalTestCase(PloneTestCase.FunctionalTestCase):
             pwd = PloneTestCase.default_password
             browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
         return browser
-

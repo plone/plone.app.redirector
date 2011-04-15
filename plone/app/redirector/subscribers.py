@@ -4,6 +4,7 @@ from plone.app.redirector.interfaces import IRedirectionStorage
 
 from Acquisition import aq_base
 
+
 def objectMoved(obj, event):
     """Tell the redirection storage that an object moved
     """
@@ -12,7 +13,7 @@ def objectMoved(obj, event):
     if event.oldParent is not None and event.newParent is not None and event.oldName is not None:
         storage = queryUtility(IRedirectionStorage)
         if storage is not None:
-            old_path = "%s/%s" % ('/'.join(event.oldParent.getPhysicalPath()), event.oldName,)
+            old_path = "%s/%s" % ('/'.join(event.oldParent.getPhysicalPath()), event.oldName)
             new_path = '/'.join(obj.getPhysicalPath())
 
             # This event gets redispatched to children, and we should keep track of them as well
@@ -45,6 +46,7 @@ def objectMoved(obj, event):
                         return
 
             storage.add(old_path, new_path)
+
 
 def objectRemoved(obj, event):
     """Tell the redirection storage that the object was removed
