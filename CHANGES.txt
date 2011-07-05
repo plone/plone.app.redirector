@@ -5,6 +5,10 @@ Changelog
 1.1.2 - unreleased
 ------------------
 
+- Don't break in the objectMoved handler if the request has no ACTUAL_URL, to
+  facilitate testing.
+  [davisagli]
+
 - Add MANIFEST.in.
   [WouterVH]
 
