@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.1.2 - unreleased
+1.1.2 - 2011-07-05
 ------------------
 
 - Don't break in the objectMoved handler if the request has no ACTUAL_URL, to
@@ -13,7 +13,7 @@ Changelog
   [WouterVH]
 
 
-1.1.2 - 2011-03-02
+1.1.1 - 2011-03-02
 ------------------
 
 - Gracefully handle errors parsing the SearchableText query on the 404 view.
