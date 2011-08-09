@@ -1,26 +1,37 @@
+#python
+import csv
+import logging
 from urllib import unquote
+from cStringIO import StringIO
 
-from zope.interface import implements
-from zope.component import queryUtility, getMultiAdapter
+#zope3
+from zope import interface
+from zope import component
+from zope.i18nmessageid import MessageFactory
+from zope.formlib.form import setUpWidgets, FormFields
 
+#zope2
 from Acquisition import aq_inner
-from Products.Five.browser import BrowserView
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.ZCTextIndex.ParseTree import QueryError, ParseError
+from Products.statusmessages.interfaces import IStatusMessage
+
+#plone
+from plone.memoize.instance import memoize
 
 from plone.app.redirector.interfaces import IFourOhFourView
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.interfaces import IRedirectionPolicy
 
-from plone.memoize.instance import memoize
-
-import logging
-
 logger = logging.getLogger('plone.app.redirector')
+_ = MessageFactory('plone')
 
 
 class FourOhFourView(BrowserView):
-    implements(IFourOhFourView)
+    interface.implements(IFourOhFourView)
 
     def attempt_redirect(self):
         url = self._url()
@@ -32,7 +43,7 @@ class FourOhFourView(BrowserView):
         except ValueError:
             return False
 
-        storage = queryUtility(IRedirectionStorage)
+        storage = component.queryUtility(IRedirectionStorage)
         if storage is None:
             return False
 
@@ -67,8 +78,7 @@ class FourOhFourView(BrowserView):
         path_elements = self._path_elements()
         if not path_elements:
             return None
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
-             name='plone_portal_state')
+        portal_state = self.portal_state
         portal = portal_state.portal()
         for i in range(len(path_elements)-1, 0, -1):
             obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
@@ -84,8 +94,7 @@ class FourOhFourView(BrowserView):
         policy = IRedirectionPolicy(self.context)
         ignore_ids = policy.ignore_ids
         portal_catalog = getToolByName(self.context, "portal_catalog")
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
-             name='plone_portal_state')
+        portal_state = self.portal_state
         navroot = portal_state.navigation_root_path()
         for element in path_elements:
             # Prevent parens being interpreted
@@ -128,34 +137,18 @@ class FourOhFourView(BrowserView):
         except ValueError:
             return None
 
-        portal_state = getMultiAdapter((aq_inner(self.context), self.request),
-            name='plone_portal_state')
+        portal_state = self.portal_state
         portal_path = '/'.join(portal_state.portal().getPhysicalPath())
         if not path.startswith(portal_path):
             return None
 
         return path.split('/')
 
-
-import csv
-from cStringIO import StringIO
-
-from zope import component
-from zope import interface
-from zope import schema
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('plone')
-from zope.formlib.form import setUpWidgets, FormFields
-
-from plone.app.controlpanel import form
-from plone.app.redirector.interfaces import IRedirectionStorage
-
-from AccessControl import getSecurityManager
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.Five import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.statusmessages.interfaces import IStatusMessage
-
+    @property
+    def portal_state(self):
+        return component.getMultiAdapter((aq_inner(self.context),
+                                                 self.request),
+                                                 name='plone_portal_state')
 
 
 def absolutize_path(path, context=None, is_alias=True):
