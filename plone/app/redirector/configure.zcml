@@ -12,6 +12,13 @@
         permission="zope2.View"
         allowed_interface=".interfaces.IFourOhFourView"
         />
+    <include package="Products.CMFPlone"/>
+    <browser:page
+        name="redirector-controlpanel"
+        for="*"
+        class=".browser.ControlPanel"
+        permission="cmf.ManagePortal"
+        />
 
     <include package="." file="events.zcml" />
 
