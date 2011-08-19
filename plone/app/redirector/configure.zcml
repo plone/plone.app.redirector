@@ -14,7 +14,7 @@
         />
     <include package="Products.CMFPlone"/>
     <browser:page
-        name="redirector-controlpanel"
+        name="redirection-controlpanel"
         for="*"
         class=".browser.ControlPanel"
         permission="cmf.ManagePortal"
