@@ -89,6 +89,24 @@
 
         </fieldset>
       </form>
+      <form tal:attributes="action view/view_url" method="post">
+        <fieldset>
+          <legend i18n:translate="legend_export">Export aliases</legend>
+
+          <p i18n:translate="description_export">
+            Push the export button, you will have a CSV file that can be open in a spreadsheet software like MSExcel.
+          </p>
+          <div class="formControls">
+            <input class="context"
+                   type="submit"
+                   value="Export"
+                   name="form.button.Export"
+                   i18n:attributes="value"
+                   />
+          </div>
+
+        </fieldset>
+      </form>
     </div>
   </body>
 </html>

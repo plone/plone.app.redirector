@@ -250,7 +250,10 @@ class ControlPanel(BrowserView):
             dst.managed_types = self.request.form['form.managed_types']
         elif 'form.button.Upload' in form:
             self.upload(form['file'], portal, storage, status)
-
+        
+        elif 'form.button.Export' in form:
+            return self.export()
+        
         return self.template()
 
     def upload(self, file, portal, storage, status):
@@ -297,4 +300,14 @@ class ControlPanel(BrowserView):
 
     @memoize
     def view_url(self):
-        return self.context.absolute_url() + '/@@redirector-controlpanel'
+        return self.context.absolute_url() + '/@@redirection-controlpanel'
+
+    def export(self):
+        out = StringIO()
+        writer = csv.writer(out)
+        writer.writerow(('old path','new path'))
+        writer.writerows((r['path'], r['redirect-to']) for r in self.redirects())
+        filename = "Redirects for %s.csv" % self.context.title
+        self.request.response.setHeader('Content-Type', 'text/csv')
+        self.request.response.setHeader('Content-Disposition', 'attachment; filename="%s"' % filename)
+        return out.getvalue()
