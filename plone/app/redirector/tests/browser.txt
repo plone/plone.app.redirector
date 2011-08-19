@@ -36,3 +36,39 @@ created, of course:
   >>> self.assertEqual(list(storage), ['/plone/foo'])
   >>> self.assertEqual(storage.get('/plone/foo'), '/plone/bar')
 
+Lets check the control panel
+
+  >>> browser.open('http://nohost/plone/@@redirection-controlpanel')
+  >>> 'Manage aliases' in browser.contents
+  True
+  >>> import cStringIO
+  >>> redirect_csv = cStringIO.StringIO(""""/old-home-page.asp","/front-page"
+  ... "/index.html","/front-page"
+  ... """)
+  >>> ctrl = browser.getControl(name='file')
+  >>> ctrl.value is None
+  True
+  >>> ctrl.add_file(redirect_csv, 'text/csv', 'redirect.csv')
+  >>> browser.getControl(name='form.button.Upload').click()
+  >>> '2 aliases added.' in browser.contents
+  True
+  
+Now try to delete one
+  >>> browser.getControl(name='redirects:tuple').value
+  []
+  >>> '/plone/index.html' in browser.getControl(name='redirects:tuple').options
+  True
+  >>> len(browser.getControl(name='redirects:tuple').options)
+  3
+  >>> browser.getControl(name='redirects:tuple').value = [browser.getControl(name='redirects:tuple').options[0]]
+  >>> browser.getControl(name="form.button.Remove").click()
+  >>> "Alias removed." in browser.contents
+  True
+  >>> len(browser.getControl(name='redirects:tuple').options)
+  2
+
+Now try the export action of the control panel
+
+  >>> browser.getControl(name='form.button.Export').click()
+  >>> browser.headers['content-type'].startswith('text/csv; charset=')
+  True
