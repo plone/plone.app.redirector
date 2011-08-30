@@ -22,6 +22,7 @@ logger = logging.getLogger('plone.app.redirector')
 class FourOhFourView(BrowserView):
     implements(IFourOhFourView)
 
+
     def attempt_redirect(self):
         url = self._url()
         if not url:
@@ -40,21 +41,10 @@ class FourOhFourView(BrowserView):
         new_path = storage.get(old_path)
 
         if not new_path:
+            new_path = self.find_redirect_if_view(old_path_elements, storage) 
 
-            # If the last part of the URL was a template name, say, look for
-            # the parent
-
-            if len(old_path_elements) > 1:
-                old_path_parent = '/'.join(old_path_elements[:-1])
-                template_id = unquote(url.split('/')[-1])
-                new_path_parent = storage.get(old_path_parent)
-                if new_path_parent == old_path_parent:
-                    logger.warning("source and target are equal : [%s]"
-                         % new_path_parent)
-                    logger.warning("for more info, see "
-                        "https://dev.plone.org/plone/ticket/8840")
-                if new_path_parent and new_path_parent <> old_path_parent:
-                    new_path = new_path_parent + '/' + template_id
+        if not new_path:
+            new_path = self.find_redirect_if_template(url, old_path_elements, storage)
 
         if not new_path:
             return False
@@ -62,6 +52,46 @@ class FourOhFourView(BrowserView):
         url = self.request.physicalPathToURL(new_path)
         self.request.response.redirect(url, status=301, lock=1)
         return True
+    
+    def find_redirect_if_view(self, old_path_elements, storage):
+        """ find redirect for urls like http://example.com/object/@@view/part """
+        if len(old_path_elements) <= 1:
+            return None
+
+        object_id_hiearchy = []
+        view_parts = []
+        for element in old_path_elements:
+            if element.startswith('@@') or view_parts:
+                view_parts.append(element)
+            else:
+                object_id_hiearchy.append(element)
+        if not view_parts:
+            return None
+        
+        old_path_parent = '/'.join(object_id_hiearchy)
+        new_path_parent = storage.get(old_path_parent)
+        if not new_path_parent or (new_path_parent == old_path_parent):
+            return None
+        
+        return new_path_parent + '/' + '/'.join(view_parts)
+               
+    def find_redirect_if_template(self, url, old_path_elements, storage):
+        if len(old_path_elements) <= 1:
+            return None
+        # If the last part of the URL was a template name, say, look for
+        # the parent
+        old_path_parent = '/'.join(old_path_elements[:-1])
+        template_id = unquote(url.split('/')[-1])
+        new_path_parent = storage.get(old_path_parent)
+
+        if new_path_parent == old_path_parent:
+            logger.warning("source and target are equal : [%s]" % new_path_parent)
+            logger.warning("for more info, see "
+                "http://dev.plone.org/plone/ticket/8840")
+        if not new_path_parent or (new_path_parent == old_path_parent):
+            return None
+        
+        return new_path_parent + '/' + template_id
 
     def find_first_parent(self):
         path_elements = self._path_elements()

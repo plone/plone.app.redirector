@@ -38,6 +38,15 @@ class TestRedirectorView(RedirectorTestCase):
         self.assertEquals(301, self.app.REQUEST.response.getStatus())
         self.assertEquals(fu + '/bar/view', self.app.REQUEST.response.getHeader('location'))
 
+    def test_attempt_redirect_with_known_url_and_view_with_part(self):
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo', fp + '/bar')
+        view = self.view(self.portal, fu + '/foo/@@view/part')
+        self.assertEquals(True, view.attempt_redirect())
+        self.assertEquals(301, self.app.REQUEST.response.getStatus())
+        self.assertEquals(fu + '/bar/@@view/part', self.app.REQUEST.response.getHeader('location'))
+
     def test_attempt_redirect_with_unknown_url(self):
         fp = '/'.join(self.folder.getPhysicalPath())
         fu = self.folder.absolute_url()
