@@ -38,7 +38,20 @@ class FourOhFourView(BrowserView):
             return False
 
         old_path = '/'.join(old_path_elements)
-        new_path = storage.get(old_path)
+
+        # First lets try with query string in cases or content migration
+
+        new_path = None
+        
+        query_string = self.request.QUERY_STRING
+        if query_string:
+            new_path = storage.get("%s?%s" % (old_path,query_string))
+            # if we matched on the query_string we don't want to include it in redirect
+            if new_path:
+                query_string = ''
+
+        if not new_path:
+            new_path = storage.get(old_path)
 
         if not new_path:
             new_path = self.find_redirect_if_view(old_path_elements, storage) 
@@ -50,6 +63,10 @@ class FourOhFourView(BrowserView):
             return False
 
         url = self.request.physicalPathToURL(new_path)
+        
+        # some analytics programs might use this info to track
+        if query_string:
+            url += "?"+query_string
         self.request.response.redirect(url, status=301, lock=1)
         return True
     

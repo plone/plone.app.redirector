@@ -7,6 +7,12 @@ Changelog
 - Support parts of views e.g. mypage/@@myview/somepart
   [anthonygerrard]
 
+- #12354 will redirect based on the query string as well as path if query_string
+  stored. [djay]
+
+- #9967 will append the same query string after redirecting to be more tracker
+  friendly. [djay]
+
 1.1.2 - 2011-07-05
 ------------------
 
