@@ -15,9 +15,10 @@ class TestRedirectorView(RedirectorTestCase):
         self.folder = self.portal.testfolder
         self.storage = getUtility(IRedirectionStorage)
 
-    def view(self, context, actual_url):
+    def view(self, context, actual_url, query_string=''):
         request = self.app.REQUEST
         request['ACTUAL_URL'] = actual_url
+        request['QUERY_STRING'] = query_string
         return getMultiAdapter((context, request), name='plone_redirector_view')
 
     def test_attempt_redirect_with_known_url(self):
@@ -62,6 +63,24 @@ class TestRedirectorView(RedirectorTestCase):
         self.assertEquals(True, view.attempt_redirect())
         self.assertEquals(301, self.app.REQUEST.response.getStatus())
         self.assertEquals(fu + '/bar/baz%20quux', self.app.REQUEST.response.getHeader('location'))
+
+    def test_attempt_redirect_with_query_string(self):
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo?blah=blah', fp + '/bar')
+        view = self.view(self.portal, fu + '/foo','blah=blah')
+        self.assertEquals(True, view.attempt_redirect())
+        self.assertEquals(301, self.app.REQUEST.response.getStatus())
+        self.assertEquals(fu + '/bar', self.app.REQUEST.response.getHeader('location'))
+
+    def test_attempt_redirect_appending_query_string(self):
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo', fp + '/bar')
+        view = self.view(self.portal, fu + '/foo', 'blah=blah')
+        self.assertEquals(True, view.attempt_redirect())
+        self.assertEquals(301, self.app.REQUEST.response.getStatus())
+        self.assertEquals(fu + '/bar?blah=blah', self.app.REQUEST.response.getHeader('location'))
 
     def test_find_first_parent_found_leaf(self):
         self.folder.invokeFactory('Folder', 'f1')
