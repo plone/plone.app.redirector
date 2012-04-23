@@ -12,6 +12,9 @@ Changelog
 
 - #9967 will append the same query string after redirecting to be more tracker
   friendly. [djay]
+  
+- #12858 first suggestion on not found page can be unsuitable
+  [anthonygerrard]
 
 1.1.2 - 2011-07-05
 ------------------

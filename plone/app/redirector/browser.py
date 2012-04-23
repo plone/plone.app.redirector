@@ -3,7 +3,7 @@ from urllib import unquote
 from zope.interface import implements
 from zope.component import queryUtility, getMultiAdapter
 
-from Acquisition import aq_inner
+from Acquisition import aq_base, aq_inner
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
 from Products.ZCTextIndex.ParseTree import QueryError, ParseError
@@ -120,7 +120,9 @@ class FourOhFourView(BrowserView):
         for i in range(len(path_elements)-1, 0, -1):
             obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
             if obj is not None:
-                return obj
+                # Skin objects acquire portal_type from the Plone site
+                if getattr(aq_base(obj), 'portal_type', None) in portal_state.friendly_types():
+                    return obj
         return None
 
     def search_for_similar(self):
