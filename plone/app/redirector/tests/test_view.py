@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest2 as unittest
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
@@ -62,6 +63,12 @@ class TestRedirectorView(unittest.TestCase):
     def test_attempt_redirect_with_unknown_url(self):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/foo')
+        self.assertEqual(False, view.attempt_redirect())
+        self.assertNotEqual(301, self.request.response.getStatus())
+
+    def test_attempt_redirect_with_unknown_url_with_illegal_characters(self):
+        fu = self.folder.absolute_url()
+        view = self.view(self.portal, fu + '+LÃ¤nder')
         self.assertEqual(False, view.attempt_redirect())
         self.assertNotEqual(301, self.request.response.getStatus())
 
