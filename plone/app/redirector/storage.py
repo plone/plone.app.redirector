@@ -223,7 +223,7 @@ class RedirectionStorage(Persistent):
         # Forget any existing reverse paths to old_path
         existing_target = self._paths.get(old_path, None)
         if (existing_target is not None) and (
-            self._rpaths.has_key(existing_target)):
+            existing_target in self._rpaths):
             if len(self._rpaths[existing_target]) == 1:
                 del self._rpaths[existing_target]
             else:
@@ -231,7 +231,7 @@ class RedirectionStorage(Persistent):
 
         # Update any references that pointed to old_path
         for p in self.redirects(old_path):
-            if p <> new_path:
+            if p != new_path:
                 self._paths[p] = new_path
                 self._rpaths.setdefault(new_path, OOSet()).insert(p)
             else:
@@ -247,7 +247,7 @@ class RedirectionStorage(Persistent):
     def remove(self, old_path):
         old_path = self._canonical(old_path)
         new_path = self._paths.get(old_path, None)
-        if new_path is not None and self._rpaths.has_key(new_path):
+        if new_path is not None and new_path in self._rpaths:
             if len(self._rpaths[new_path]) == 1:
                 del self._rpaths[new_path]
             else:
@@ -259,13 +259,13 @@ class RedirectionStorage(Persistent):
         for p in self._rpaths.get(new_path, []):
             if p in self._paths:
                 del self._paths[p]
-        if self._rpaths.has_key(new_path):
+        if new_path in self._rpaths:
             if new_path in self._rpaths:
                 del self._rpaths[new_path]
 
     def has_path(self, old_path):
         old_path = self._canonical(old_path)
-        return bool(self._paths.has_key(old_path))
+        return bool(old_path in self._paths)
 
     def get(self, old_path, default=None):
         old_path = self._canonical(old_path)
