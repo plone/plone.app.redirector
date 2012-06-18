@@ -18,11 +18,11 @@ class TestRedirectorSetup(unittest.TestCase):
 
     def test_utility(self):
         utility = queryUtility(IRedirectionStorage)
-        self.assertNotEquals(None, utility)
+        self.assertNotEqual(None, utility)
 
     def test_view(self):
         view = self.portal.restrictedTraverse('@@plone_redirector_view')
-        self.assertNotEquals(None, view)
+        self.assertNotEqual(None, view)
 
 
 def test_suite():

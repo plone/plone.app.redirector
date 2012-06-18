@@ -34,9 +34,9 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar',
             self.request.response.getHeader('location'))
 
     def test_attempt_redirect_with_known_url_and_template(self):
@@ -44,9 +44,9 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/view')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar/view',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar/view',
             self.request.response.getHeader('location'))
 
     def test_attempt_redirect_with_known_url_and_view_with_part(self):
@@ -54,25 +54,25 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/@@view/part')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar/@@view/part',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar/@@view/part',
             self.request.response.getHeader('location'))
 
     def test_attempt_redirect_with_unknown_url(self):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/foo')
-        self.assertEquals(False, view.attempt_redirect())
-        self.assertNotEquals(301, self.request.response.getStatus())
+        self.assertEqual(False, view.attempt_redirect())
+        self.assertNotEqual(301, self.request.response.getStatus())
 
     def test_attempt_redirect_with_quoted_url(self):
         fp = '/'.join(self.folder.getPhysicalPath())
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/baz%20quux')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar/baz%20quux',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar/baz%20quux',
             self.request.response.getHeader('location'))
 
     def test_attempt_redirect_with_query_string(self):
@@ -80,9 +80,9 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo?blah=blah', fp + '/bar')
         view = self.view(self.portal, fu + '/foo', 'blah=blah')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar',
             self.request.response.getHeader('location'))
 
     def test_attempt_redirect_appending_query_string(self):
@@ -90,9 +90,9 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo', 'blah=blah')
-        self.assertEquals(True, view.attempt_redirect())
-        self.assertEquals(301, self.request.response.getStatus())
-        self.assertEquals(fu + '/bar?blah=blah',
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(fu + '/bar?blah=blah',
             self.request.response.getHeader('location'))
 
     def test_find_first_parent_found_leaf(self):
@@ -100,24 +100,24 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f1/p1')
         obj = view.find_first_parent()
-        self.assertEquals(fu + '/f1', obj.absolute_url())
+        self.assertEqual(fu + '/f1', obj.absolute_url())
 
     def test_find_first_parent_found_node(self):
         self.folder.invokeFactory('Folder', 'f1')
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f1/p1/p2')
         obj = view.find_first_parent()
-        self.assertEquals(fu + '/f1', obj.absolute_url())
+        self.assertEqual(fu + '/f1', obj.absolute_url())
 
     def test_find_first_parent_not_found(self):
         view = self.view(self.portal, '/foo/f1/p1/p2')
-        self.assertEquals(None, view.find_first_parent())
+        self.assertEqual(None, view.find_first_parent())
 
     def test_find_first_parent_not_viewable(self):
         view = self.view(
             self.portal,
             self.portal.absolute_url() + '/portal_css/Plone Default/gone.css')
-        self.assertEquals(None, view.find_first_parent())
+        self.assertEqual(None, view.find_first_parent())
 
     def test_search_leaf(self):
         self.folder.invokeFactory('Folder', 'f1')
@@ -127,8 +127,8 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f2/p1')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
-        self.assertEquals(1, len(urls))
-        self.assertEquals(fu + '/f1/p1', urls[0])
+        self.assertEqual(1, len(urls))
+        self.assertEqual(fu + '/f1/p1', urls[0])
 
     def test_search_ignore_ids(self):
         self.folder.invokeFactory('Folder', 'f1')
@@ -139,8 +139,8 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f2/p1/view')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
-        self.assertEquals(1, len(urls))
-        self.assertEquals(fu + '/f1/p1', urls[0])
+        self.assertEqual(1, len(urls))
+        self.assertEqual(fu + '/f1/p1', urls[0])
 
     def test_search_node(self):
         self.folder.invokeFactory('Folder', 'f1')
@@ -150,8 +150,8 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f2/p1/f3')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
-        self.assertEquals(1, len(urls))
-        self.assertEquals(fu + '/f1/p1', urls[0])
+        self.assertEqual(1, len(urls))
+        self.assertEqual(fu + '/f1/p1', urls[0])
 
     def test_search_parens(self):
         self.folder.invokeFactory('Folder', 'f1')
@@ -161,8 +161,8 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/f2/p1/f3(')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
-        self.assertEquals(1, len(urls))
-        self.assertEquals(fu + '/f1/p1', urls[0])
+        self.assertEqual(1, len(urls))
+        self.assertEqual(fu + '/f1/p1', urls[0])
 
     def test_search_query_parser_error(self):
         view = self.view(self.portal, self.portal.absolute_url() + '/&')
@@ -180,8 +180,8 @@ class TestRedirectorView(unittest.TestCase):
         self.portal.portal_properties.site_properties.types_not_searched = ['Document']
         view = self.view(self.portal, fu + '/f2/p1')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
-        self.assertEquals(1, len(urls))
-        self.assertEquals(fu + '/f2', urls[0])
+        self.assertEqual(1, len(urls))
+        self.assertEqual(fu + '/f2', urls[0])
 
 
 def test_suite():
