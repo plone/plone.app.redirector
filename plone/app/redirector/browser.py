@@ -22,7 +22,6 @@ logger = logging.getLogger('plone.app.redirector')
 class FourOhFourView(BrowserView):
     implements(IFourOhFourView)
 
-
     def attempt_redirect(self):
         url = self._url()
         if not url:
@@ -42,11 +41,12 @@ class FourOhFourView(BrowserView):
         # First lets try with query string in cases or content migration
 
         new_path = None
-        
+
         query_string = self.request.QUERY_STRING
         if query_string:
-            new_path = storage.get("%s?%s" % (old_path,query_string))
-            # if we matched on the query_string we don't want to include it in redirect
+            new_path = storage.get("%s?%s" % (old_path, query_string))
+            # if we matched on the query_string we don't want to include it
+            # in redirect
             if new_path:
                 query_string = ''
 
@@ -54,24 +54,28 @@ class FourOhFourView(BrowserView):
             new_path = storage.get(old_path)
 
         if not new_path:
-            new_path = self.find_redirect_if_view(old_path_elements, storage) 
+            new_path = self.find_redirect_if_view(old_path_elements, storage)
 
         if not new_path:
-            new_path = self.find_redirect_if_template(url, old_path_elements, storage)
+            new_path = self.find_redirect_if_template(
+                url,
+                old_path_elements,
+                storage)
 
         if not new_path:
             return False
 
         url = self.request.physicalPathToURL(new_path)
-        
+
         # some analytics programs might use this info to track
         if query_string:
-            url += "?"+query_string
+            url += "?" + query_string
         self.request.response.redirect(url, status=301, lock=1)
         return True
-    
+
     def find_redirect_if_view(self, old_path_elements, storage):
-        """ find redirect for urls like http://example.com/object/@@view/part """
+        """ find redirect for urls like http://example.com/object/@@view/part.
+        """
         if len(old_path_elements) <= 1:
             return None
 
@@ -84,14 +88,14 @@ class FourOhFourView(BrowserView):
                 object_id_hiearchy.append(element)
         if not view_parts:
             return None
-        
+
         old_path_parent = '/'.join(object_id_hiearchy)
         new_path_parent = storage.get(old_path_parent)
         if not new_path_parent or (new_path_parent == old_path_parent):
             return None
-        
+
         return new_path_parent + '/' + '/'.join(view_parts)
-               
+
     def find_redirect_if_template(self, url, old_path_elements, storage):
         if len(old_path_elements) <= 1:
             return None
@@ -102,12 +106,13 @@ class FourOhFourView(BrowserView):
         new_path_parent = storage.get(old_path_parent)
 
         if new_path_parent == old_path_parent:
-            logger.warning("source and target are equal : [%s]" % new_path_parent)
+            logger.warning(
+                "source and target are equal : [%s]" % new_path_parent)
             logger.warning("for more info, see "
                 "http://dev.plone.org/plone/ticket/8840")
         if not new_path_parent or (new_path_parent == old_path_parent):
             return None
-        
+
         return new_path_parent + '/' + template_id
 
     def find_first_parent(self):
@@ -117,11 +122,12 @@ class FourOhFourView(BrowserView):
         portal_state = getMultiAdapter((aq_inner(self.context), self.request),
              name='plone_portal_state')
         portal = portal_state.portal()
-        for i in range(len(path_elements)-1, 0, -1):
+        for i in range(len(path_elements) - 1, 0, -1):
             obj = portal.restrictedTraverse('/'.join(path_elements[:i]), None)
             if obj is not None:
                 # Skin objects acquire portal_type from the Plone site
-                if getattr(aq_base(obj), 'portal_type', None) in portal_state.friendly_types():
+                if getattr(aq_base(obj), 'portal_type', None) \
+                   in portal_state.friendly_types():
                     return obj
         return None
 
@@ -138,12 +144,12 @@ class FourOhFourView(BrowserView):
         navroot = portal_state.navigation_root_path()
         for element in path_elements:
             # Prevent parens being interpreted
-            element=element.replace('(', '"("')
-            element=element.replace(')', '")"')
+            element = element.replace('(', '"("')
+            element = element.replace(')', '")"')
             if element not in ignore_ids:
                 try:
                     result_set = portal_catalog(SearchableText=element,
-                        path = navroot,
+                        path=navroot,
                         portal_type=portal_state.friendly_types(),
                         sort_limit=10)
                     if result_set:
