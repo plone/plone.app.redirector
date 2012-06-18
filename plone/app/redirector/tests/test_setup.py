@@ -1,13 +1,20 @@
-import unittest
-from plone.app.redirector.tests.base import RedirectorTestCase
+import unittest2 as unittest
 
 from zope.component import queryUtility
 
 from plone.app.redirector.interfaces import IRedirectionStorage
+from plone.app.redirector.testing import \
+    PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
 
-class TestRedirectorSetup(RedirectorTestCase):
+
+class TestRedirectorSetup(unittest.TestCase):
     """Ensure that the basic redirector setup is successful.
     """
+
+    layer = PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
 
     def test_utility(self):
         utility = queryUtility(IRedirectionStorage)
@@ -16,6 +23,7 @@ class TestRedirectorSetup(RedirectorTestCase):
     def test_view(self):
         view = self.portal.restrictedTraverse('@@plone_redirector_view')
         self.assertNotEquals(None, view)
+
 
 def test_suite():
     suite = unittest.TestSuite()

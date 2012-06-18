@@ -21,11 +21,16 @@ setup(name='plone.app.redirector',
       url='http://pypi.python.org/pypi/plone.app.redirector',
       license='GPL version 2',
       packages=find_packages(exclude=['ez_setup']),
-      namespace_packages = ['plone', 'plone.app'],
+      namespace_packages=['plone', 'plone.app'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
         'setuptools',
         'plone.memoize',
       ],
+      extras_require={
+          'test': [
+              'plone.app.testing',
+          ]
+      },
       )

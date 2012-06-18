@@ -1,15 +1,25 @@
-import unittest
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
+import unittest2 as unittest
 import transaction
-
-from plone.app.redirector.tests.base import RedirectorTestCase
 
 from zope.component import getUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
+from plone.app.redirector.testing import \
+    PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
 
 
-class TestRedirectorEvents(RedirectorTestCase):
+class TestRedirectorEvents(unittest.TestCase):
     """Ensure that the redirector event subscribers behave as expected.
     """
+
+    layer = PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        self.portal.invokeFactory("Folder", "folder")
+        self.folder = self.portal.folder
 
     @property
     def storage(self):

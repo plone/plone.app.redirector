@@ -1,18 +1,32 @@
-from unittest import TestSuite
-from zope.testing import doctest
-from Testing import ZopeTestCase as ztc
-from plone.app.redirector.tests.base import RedirectorFunctionalTestCase
+# -*- coding: utf-8 -*-
+import doctest
 
-optionflags = (doctest.REPORT_ONLY_FIRST_FAILURE |
-               doctest.ELLIPSIS |
-               doctest.NORMALIZE_WHITESPACE)
+import unittest2 as unittest
+import pprint
+
+from plone.testing import layered
+
+from plone.app.redirector.testing import \
+    PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING
+
+
+optionflags = (
+    doctest.ELLIPSIS |
+    doctest.NORMALIZE_WHITESPACE |
+    doctest.REPORT_ONLY_FIRST_FAILURE)
+normal_testfiles = [
+    'browser.txt',
+]
 
 
 def test_suite():
-    return TestSuite([
-        ztc.FunctionalDocFileSuite(
-           'browser.txt',
-           package='plone.app.redirector.tests',
-           test_class=RedirectorFunctionalTestCase,
-           optionflags=optionflags),
-    ])
+    suite = unittest.TestSuite()
+    suite.addTests([
+        layered(doctest.DocFileSuite(test,
+                                     optionflags=optionflags,
+                                     globs={'pprint': pprint.pprint,
+                                            }
+                                     ),
+                layer=PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING)
+        for test in normal_testfiles])
+    return suite

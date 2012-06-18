@@ -1,3 +1,13 @@
+Test setup::
+
+    >>> app = layer['app']
+    >>> from plone.testing.z2 import Browser
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
+    >>> browser.addHeader('Authorization', 'Basic admin:secret')
+    >>> portal = layer['portal']
+    >>> portal_url = 'http://nohost/plone'
+
 This test checks https://dev.plone.org/plone/ticket/8260, i.e. it makes sure
 no redirection entries are created when a content object gets instantiated:
 
@@ -7,12 +17,11 @@ no redirection entries are created when a content object gets instantiated:
 
 Initially the redirection storage should be empty:
 
-  >>> self.assertEqual(list(storage), [])
+  >>> list(storage)
+  []
 
 Let's create an object and check again:
 
-  >>> self.setRoles(('Manager',))
-  >>> browser = self.getBrowser()
   >>> browser.open('http://nohost/plone/')
   >>> browser.getLink(url='/createObject?type_name=Document').click()
   >>> browser.getControl('Title').value = 'Foo'
@@ -21,7 +30,8 @@ Let's create an object and check again:
   '...Info...Changes saved...
    ...documentFirstHeading...Foo...
 
-  >>> self.assertEqual(list(storage), [])
+  >>> list(storage)
+  []
 
 However, if this object is renamed in a normal manner, an entry should be
 created, of course:
@@ -33,6 +43,7 @@ created, of course:
   >>> browser.getControl('New Title').value = 'Bar'
   >>> browser.getControl('Rename All').click()
 
-  >>> self.assertEqual(list(storage), ['/plone/foo'])
-  >>> self.assertEqual(storage.get('/plone/foo'), '/plone/bar')
-
+  >>> list(storage)
+  ['/plone/foo']
+  >>> storage.get('/plone/foo')
+  '/plone/bar'

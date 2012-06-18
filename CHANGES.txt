@@ -7,6 +7,9 @@ Changelog
 - Import object events from zope.lifecycleevent.
   [davisagli]
 
+- Move tests from PloneTestCase to plone.app.testing.
+  [timo]
+
 
 1.1.3 (2012-05-07)
 ------------------
@@ -19,7 +22,7 @@ Changelog
 
 - #9967 will append the same query string after redirecting to be more tracker
   friendly. [djay]
-  
+
 - #12858 first suggestion on not found page can be unsuitable
   [anthonygerrard]
 
