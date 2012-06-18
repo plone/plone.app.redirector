@@ -10,6 +10,10 @@ Changelog
 - Move tests from PloneTestCase to plone.app.testing.
   [timo]
 
+- Make the redirector return false and catch a UnicodeDecode error if a URL
+  contains illegal characters.
+  [timo]
+
 
 1.1.3 (2012-05-07)
 ------------------

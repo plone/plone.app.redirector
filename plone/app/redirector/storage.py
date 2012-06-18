@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from zope.interface import implements
 
 from persistent import Persistent
@@ -269,7 +270,12 @@ class RedirectionStorage(Persistent):
 
     def get(self, old_path, default=None):
         old_path = self._canonical(old_path)
-        return self._paths.get(old_path, default)
+        try:
+            return self._paths.get(old_path, default)
+        except UnicodeDecodeError:
+            # Always return False if the URL contains illegal characters and
+            # can not be decoded.
+            return False
 
     def redirects(self, new_path):
         new_path = self._canonical(new_path)
