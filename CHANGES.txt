@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2 (unreleased)
-----------------
+1.2a1 (2012-07-02)
+------------------
 
 - Import object events from zope.lifecycleevent.
   [davisagli]
