@@ -150,10 +150,10 @@ class TestRedirectorEvents(unittest.TestCase):
 
     def test_add_doesnt_create_storage_entry(self):
         """ refers https://dev.plone.org/plone/ticket/8260 """
-        self.assertEqual(list(self.storage), [])
+        orig_len = len(list(self.storage))
         self.folder.invokeFactory('Document', 'p1')
         transaction.savepoint(1)
-        self.assertEqual(list(self.storage), [])
+        self.assertEqual(0, len(list(self.storage)) - orig_len)
 
 
 def test_suite():
