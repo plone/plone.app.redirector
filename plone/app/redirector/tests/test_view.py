@@ -102,6 +102,17 @@ class TestRedirectorView(unittest.TestCase):
         self.assertEqual(fu + '/bar?blah=blah',
             self.request.response.getHeader('location'))
 
+    def test_attempt_redirect_with_external_url(self):
+        fp = '/'.join(self.folder.getPhysicalPath())
+        fu = self.folder.absolute_url()
+        self.storage.add(fp + '/foo',
+                         'http://otherhost' + fp + '/bar%20qux corge')
+        view = self.view(self.portal, fu + '/foo')
+        self.assertEqual(True, view.attempt_redirect())
+        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual('http://otherhost' + fp + '/bar%20qux%20corge',
+            self.request.response.getHeader('location'))
+
     def test_find_first_parent_found_leaf(self):
         self.folder.invokeFactory('Folder', 'f1')
         fu = self.folder.absolute_url()

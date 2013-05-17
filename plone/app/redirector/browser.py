@@ -1,4 +1,6 @@
+import urlparse
 from urllib import unquote
+from urllib import quote
 
 from zope.interface import implements
 from zope.component import queryUtility, getMultiAdapter
@@ -65,7 +67,16 @@ class FourOhFourView(BrowserView):
         if not new_path:
             return False
 
-        url = self.request.physicalPathToURL(new_path)
+        url = urlparse.urlsplit(new_path)
+        if url.netloc:
+            # External URL
+            # avoid double quoting
+            url_path = unquote(url.path)
+            url_path = quote(url_path)
+            url = urlparse.SplitResult(
+                *(url[:2] + (url_path, ) + url[3:])).geturl()
+        else:
+            url = self.request.physicalPathToURL(new_path)
 
         # some analytics programs might use this info to track
         if query_string:
