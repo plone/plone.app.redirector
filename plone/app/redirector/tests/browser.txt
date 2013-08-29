@@ -23,11 +23,11 @@ Initially the redirection storage should be empty:
 Let's create an object and check again:
 
   >>> browser.open('http://nohost/plone/')
-  >>> browser.getLink(url='/createObject?type_name=Document').click()
-  >>> browser.getControl('Title').value = 'Foo'
+  >>> browser.getLink(url='++add++Document').click()
+  >>> browser.getControl(name='form.widgets.IDublinCore.title').value = 'Foo'
   >>> browser.getControl('Save').click()
   >>> browser.contents
-  '...Info...Changes saved...
+  '...Info...Item created...
    ...documentFirstHeading...Foo...
 
   >>> list(storage)
