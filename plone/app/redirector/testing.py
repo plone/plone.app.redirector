@@ -1,5 +1,5 @@
-from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
 
@@ -8,14 +8,13 @@ from zope.configuration import xmlconfig
 
 class PloneAppRedirector(PloneSandboxLayer):
 
-    defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
+    defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
         import plone.app.redirector
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.redirector,
-            context=configurationContext)
+        xmlconfig.file('configure.zcml',
+                       plone.app.redirector,
+                       context=configurationContext)
 
 
 PLONE_APP_REDIRECTOR_FIXTURE = PloneAppRedirector()
