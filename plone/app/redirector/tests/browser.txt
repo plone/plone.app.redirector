@@ -36,12 +36,11 @@ Let's create an object and check again:
 However, if this object is renamed in a normal manner, an entry should be
 created, of course:
 
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Foo').selected = True
-  >>> browser.getControl('Rename').click()
+  >>> browser.open('http://nohost/plone/foo')
+  >>> browser.getLink('Rename').click()
   >>> browser.getControl('New Short Name').value = 'bar'
   >>> browser.getControl('New Title').value = 'Bar'
-  >>> browser.getControl('Rename All').click()
+  >>> browser.getControl('Rename').click()
 
   >>> list(storage)
   ['/plone/foo']
