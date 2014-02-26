@@ -4,6 +4,9 @@ Changelog
 1.3.0 (unreleased)
 ------------------
 
+- Rename without using folder_contents.
+  [davisagli]
+
 - Use p.a.contenttypes test fixture and adapt/fix failing tests due to the
   ATContentTypes removal from PLONE_FIXTURE in Plone 5.
   [timo]
