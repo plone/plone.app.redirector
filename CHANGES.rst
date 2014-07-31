@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use response status code 302 instead of 301 to prevent browsers caching
+  redirects forever (because nothing in Plone prevents creating new content
+  with the old name
+  [datakurre]
 
 
 1.3.5 (2017-06-20)

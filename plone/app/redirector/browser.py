@@ -82,7 +82,7 @@ class FourOhFourView(BrowserView):
         # some analytics programs might use this info to track
         if query_string:
             url += "?" + query_string
-        self.request.response.redirect(url, status=301, lock=1)
+        self.request.response.redirect(url, status=302, lock=1)
         return True
 
     def find_redirect_if_view(self, old_path_elements, storage):
