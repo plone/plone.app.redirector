@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.2.2 (unreleased)
+1.2.2 (2015-08-14)
 ------------------
 
 - Rerelease of same code as 1.2.  The changes from 1.2.1 are for Plone 5.
