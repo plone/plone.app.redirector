@@ -1,10 +1,23 @@
 Changelog
 =========
 
-1.2.1 (unreleased)
+
+1.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Rerelease of same code as 1.2.  The changes from 1.2.1 are for Plone 5.
+  [maurits]
+
+
+1.2.1 (2014-02-26)
+------------------
+
+- Rename without using folder_contents.
+  [davisagli]
+
+- Use p.a.contenttypes test fixture and adapt/fix failing tests due to the
+  ATContentTypes removal from PLONE_FIXTURE in Plone 5.
+  [timo]
 
 
 1.2 (2013-05-26)
