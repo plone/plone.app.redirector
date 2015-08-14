@@ -1,10 +1,18 @@
 Changelog
 =========
 
-1.2.2 (unreleased)
+1.3 (unreleased)
+----------------
+
+- Rerelease of 1.2.1 as 1.3 for clarity.  This is for Plone 5 only.
+  [maurits]
+
+
+1.2.2 (2015-08-14)
 ------------------
 
-- Nothing changed yet.
+- Rerelease of same code as 1.2.  The changes from 1.2.1 are for Plone 5.
+  [maurits]
 
 
 1.2.1 (2014-02-26)
