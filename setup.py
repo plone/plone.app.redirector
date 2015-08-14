@@ -5,16 +5,19 @@ version = '1.2.2.dev0'
 setup(name='plone.app.redirector',
       version=version,
       description="redirection tool",
-      long_description=open("README.txt").read() + "\n" +
-                       open("CHANGES.txt").read(),
+      long_description=(open("README.txt").read() + "\n" +
+                        open("CHANGES.txt").read()),
       classifiers=[
           "Environment :: Web Environment",
           "Framework :: Plone",
+          "Framework :: Plone :: 4.3",
           "Framework :: Zope2",
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Operating System :: OS Independent",
           "Programming Language :: Python",
-        ],
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
+      ],
       keywords='',
       author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
@@ -25,8 +28,8 @@ setup(name='plone.app.redirector',
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        'setuptools',
-        'plone.memoize',
+          'setuptools',
+          'plone.memoize',
       ],
       extras_require={
           'test': [
