@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3 (unreleased)
+1.3 (2015-08-14)
 ----------------
 
 - Rerelease of 1.2.1 as 1.3 for clarity.  This is for Plone 5 only.
