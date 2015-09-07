@@ -5,6 +5,8 @@ from plone.app.testing import setRoles
 
 from zope.component import getUtility, getMultiAdapter
 from plone.app.redirector.interfaces import IRedirectionStorage
+from Products.CMFPlone.interfaces import ISearchSchema
+from plone.registry.interfaces import IRegistry
 
 from plone.app.redirector.testing import \
     PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
@@ -195,7 +197,9 @@ class TestRedirectorView(unittest.TestCase):
         self.folder.f1.invokeFactory('Document', 'p1')
         self.folder.f1.invokeFactory('Document', 'p2')
         fu = self.folder.absolute_url()
-        self.portal.portal_properties.site_properties.types_not_searched = ['Document']
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ISearchSchema, prefix="plone")
+        settings.types_not_searched = ('Document',)
         view = self.view(self.portal, fu + '/f2/p1')
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEqual(1, len(urls))
