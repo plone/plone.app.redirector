@@ -4,7 +4,8 @@ Changelog
 1.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed tests to use registry for value lookup.
+  [esteele]
 
 
 1.3 (2015-08-14)
