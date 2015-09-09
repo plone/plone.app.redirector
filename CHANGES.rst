@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3.1 (unreleased)
+1.3.1 (2015-09-09)
 ------------------
 
 - Fixed tests to use registry for value lookup.
