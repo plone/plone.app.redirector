@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 
 from persistent import Persistent
 from BTrees.OOBTree import OOBTree, OOSet
@@ -6,6 +6,7 @@ from BTrees.OOBTree import OOBTree, OOSet
 from plone.app.redirector.interfaces import IRedirectionStorage
 
 
+@implementer(IRedirectionStorage)
 class RedirectionStorage(Persistent):
     """Stores old paths to new paths.
 
@@ -206,8 +207,6 @@ class RedirectionStorage(Persistent):
         >>> sorted(p)
         ['/barney', '/baz', '/foo']
     """
-
-    implements(IRedirectionStorage)
 
     def __init__(self):
         self._paths = OOBTree()

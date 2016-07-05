@@ -1,11 +1,11 @@
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 from zope.component import adapts
 
 from plone.app.redirector.interfaces import IRedirectionPolicy
 
 
+@implementer(IRedirectionPolicy)
 class RedirectionPolicy(object):
-    implements(IRedirectionPolicy)
     adapts(Interface)
 
     def __init__(self, context):
