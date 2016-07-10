@@ -2,7 +2,7 @@ import urlparse
 from urllib import unquote
 from urllib import quote
 
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component import queryUtility, getMultiAdapter
 
 from Acquisition import aq_base, aq_inner
@@ -21,8 +21,8 @@ import logging
 logger = logging.getLogger('plone.app.redirector')
 
 
+@implementer(IFourOhFourView)
 class FourOhFourView(BrowserView):
-    implements(IFourOhFourView)
 
     def attempt_redirect(self):
         url = self._url()
