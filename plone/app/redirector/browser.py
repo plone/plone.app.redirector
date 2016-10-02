@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urlparse
 from urllib import unquote
 from urllib import quote
