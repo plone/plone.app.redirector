@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from zope.component import queryUtility
 from Products.CMFCore.utils import getToolByName
 from plone.app.redirector.interfaces import IRedirectionStorage
