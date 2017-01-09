@@ -196,9 +196,7 @@ class RedirectionStorage(Persistent):
 
     We can get an iterator over all existing paths
 
-        >>> iter(p)
-        <OO-iterator object at ...>
-        >>> sorted(p)
+        >>> sorted(iter(p))
         ['/baz']
 
     Now add some more
