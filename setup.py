@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = '1.3.4.dev0'
+version = '1.3.4'
 
 setup(name='plone.app.redirector',
       version=version,
