@@ -34,8 +34,6 @@ Bug fixes:
 - Add coding header on python files.
   [gforcada]
 
-- Fix test when running with ZODB 4.
-  [davisagli]
 
 1.3.2 (2016-08-18)
 ------------------
