@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
-import unittest2 as unittest
+import unittest
 import transaction
 
 from zope.component import getUtility
