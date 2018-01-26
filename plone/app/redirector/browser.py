@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import urlparse
-from urllib import unquote
-from urllib import quote
 
 from zope.interface import implementer
 from zope.component import queryUtility, getMultiAdapter
@@ -17,7 +14,12 @@ from plone.app.redirector.interfaces import IRedirectionPolicy
 
 from plone.memoize.instance import memoize
 
+from six.moves import urllib
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import unquote
+
 import logging
+
 
 logger = logging.getLogger('plone.app.redirector')
 
@@ -68,13 +70,13 @@ class FourOhFourView(BrowserView):
         if not new_path:
             return False
 
-        url = urlparse.urlsplit(new_path)
+        url = urllib.parse.urlsplit(new_path)
         if url.netloc:
             # External URL
             # avoid double quoting
             url_path = unquote(url.path)
             url_path = quote(url_path)
-            url = urlparse.SplitResult(
+            url = urllib.parse.SplitResult(
                 *(url[:2] + (url_path, ) + url[3:])).geturl()
         else:
             url = self.request.physicalPathToURL(new_path)

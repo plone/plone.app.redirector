@@ -31,6 +31,7 @@ setup(name='plone.app.redirector',
       install_requires=[
           'setuptools',
           'plone.memoize',
+          'six',
       ],
       extras_require={
           'test': [
