@@ -4,14 +4,6 @@ Changelog
 1.3.6 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Add Python 2 / 3 compatibility
