@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+1.3.7 (2018-11-21)
+------------------
+
+Bug fixes:
+
+
+- Cleanup project level files (setup.py, pyproject.toml) [maurits] [gforcada]
+  (#2524)
+
+
 1.3.6 (2018-02-02)
 ------------------
 
