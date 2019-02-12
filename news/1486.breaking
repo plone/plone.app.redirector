@@ -1,0 +1,5 @@
+No longer try to check portal_redirection for allowed types.
+
+This was from Products.RedirectionTool, which is scheduled to be merged into CMFPlone 5.2.
+The feature to allow redirections only for specific types will be either removed or changed.
+[maurits]
