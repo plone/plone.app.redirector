@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.0 (2019-02-13)
+------------------
+
+Breaking changes:
+
+
+- No longer try to check portal_redirection for allowed types. This was from
+  Products.RedirectionTool, which is scheduled to be merged into CMFPlone 5.2.
+  The feature to allow redirections only for specific types will be either
+  removed or changed. [maurits] (#1486)
+
+
 1.3.7 (2018-11-21)
 ------------------
 
