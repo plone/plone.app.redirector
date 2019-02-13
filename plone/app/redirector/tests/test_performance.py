@@ -8,7 +8,17 @@ import unittest
 
 
 env_name = 'PLONE_APP_REDIRECTOR_PERFORMANCE_NUMBER'
-NUMBER = int(os.getenv(env_name, 0))
+if env_name in os.environ:
+    # This could fail with a ValueError, but that seems a fine error message.
+    NUMBER = int(os.getenv(env_name))
+    VERBOSE = True
+else:
+    # No environment variable set.
+    # Pick a relatively low number so the run is fast.
+    # And don't be verbose, don't print anything:
+    # only give an assertion error when it is really slow.
+    NUMBER = 10000
+    VERBOSE = False
 
 
 class TestStoragePerformance(unittest.TestCase):
@@ -31,7 +41,7 @@ class TestStoragePerformance(unittest.TestCase):
                     message, total, limit
                 )
             )
-        else:
+        elif VERBOSE:
             print(
                 '{0}: {1:.2f} seconds (max {2})'.format(message, total, limit)
             )
@@ -61,9 +71,10 @@ class TestStoragePerformance(unittest.TestCase):
 
         """
         st = RedirectionStorage()
+        if VERBOSE:
+            print('\nRunning plone.app.redirector storage performance tests.')
+            print('Inserting {0} paths...'.format(NUMBER))
 
-        print('\nRunning plone.app.redirector storage performance tests.')
-        print('Inserting {0} paths...'.format(NUMBER))
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit('Inserting', NUMBER / 10000.0):
             for i in range(NUMBER):
