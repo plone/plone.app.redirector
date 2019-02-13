@@ -79,6 +79,8 @@ class RedirectionStorage(Persistent):
         old_path = self._canonical(old_path)
         return old_path in self._paths
 
+    __contains__ = has_path
+
     def get(self, old_path, default=None):
         old_path = self._canonical(old_path)
         return self._paths.get(old_path, default)
