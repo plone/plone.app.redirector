@@ -10,7 +10,7 @@ import unittest
 env_name = 'PLONE_APP_REDIRECTOR_PERFORMANCE_NUMBER'
 if env_name in os.environ:
     # This could fail with a ValueError, but that seems a fine error message.
-    NUMBER = int(os.getenv(env_name))
+    NUMBER = max(int(os.getenv(env_name)), 1)
     VERBOSE = True
 else:
     # No environment variable set.
@@ -46,15 +46,8 @@ class TestStoragePerformance(unittest.TestCase):
                 '{0}: {1:.2f} seconds (max {2})'.format(message, total, limit)
             )
 
-    @unittest.skipIf(NUMBER <= 0, '{0} env variable not set'.format(env_name))
     def test_storage_performance(self):
         """Test the performance of some of the code.
-
-        This is skipped by default, unless you set an environment variable.
-        If you don't set this, or set this to zero or less, you will see
-        a skip reason when you run the tests with enough verbosity:
-
-            $ bin/test -s plone.app.redirector -m test_performance -vvv
 
         Sample run with one million inserts:
 
