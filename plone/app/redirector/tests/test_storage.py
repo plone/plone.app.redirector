@@ -10,10 +10,9 @@ class TestStorage(unittest.TestCase):
     This used to be in a doctest inside storage.py itself.
     """
 
-    def test_storage_basics(self):
-        p = RedirectionStorage()
-
+    def test_storage_one_redirect(self):
         # Add one redirect
+        p = RedirectionStorage()
         self.assertFalse(p.has_path('/foo'))
         p.add('/foo', '/bar')
         self.assertTrue(p.has_path('/foo'))
@@ -21,38 +20,54 @@ class TestStorage(unittest.TestCase):
         self.assertFalse(p.has_path('/bar'))
         self.assertListEqual(p.redirects('/bar'), ['/foo'])
 
-        # Note that trailing slashes are ignored:
+    def test_storage_trailing_slash(self):
+        # trailing slashes are ignored
+        p = RedirectionStorage()
+        self.assertFalse(p.has_path('/foo/'))
+        p.add('/foo', '/bar')
         self.assertTrue(p.has_path('/foo/'))
         self.assertEqual(p.get('/foo/'), '/bar')
         self.assertListEqual(p.redirects('/bar/'), ['/foo'])
 
-        # Circular references are ignored
-        p.add('/circle', '/circle')
-        self.assertFalse(p.has_path('/circle'))
-        self.assertEqual(p.get('/circle', '_marker_'), '_marker_')
-        self.assertListEqual(p.redirects('/circle'), [])
+        # This goes the other way around too
+        self.assertFalse(p.has_path('/quux'))
+        p.add('/quux/', '/baaz/')
+        self.assertTrue(p.has_path('/quux'))
+        self.assertEqual(p.get('/quux'), '/baaz')
+        self.assertListEqual(p.redirects('/baaz'), ['/quux'])
 
-        # Add another redirect
-        self.assertFalse(p.has_path('/baz'))
+    def test_storage_two_redirects(self):
+        # Add multiple redirects.
+        p = RedirectionStorage()
+        p.add('/foo', '/bar')
         p.add('/baz', '/bar')
         self.assertTrue(p.has_path('/baz'))
         self.assertEqual(p.get('/baz'), '/bar')
         self.assertListEqual(sorted(p.redirects('/bar')), ['/baz', '/foo'])
 
+    def test_storage_update_redirect(self):
         # Update a redirect
+        p = RedirectionStorage()
+        p.add('/foo', '/bar')
+        p.add('/baz', '/bar')
         p.add('/foo', '/quux')
         self.assertTrue(p.has_path('/foo'))
         self.assertEqual(p.get('/foo'), '/quux')
         self.assertListEqual(p.redirects('/bar'), ['/baz'])
         self.assertListEqual(p.redirects('/quux'), ['/foo'])
 
+    def test_storage_remove_redirect(self):
         # Remove a redirect
+        p = RedirectionStorage()
+        p.add('/foo', '/bar')
         p.remove('/foo')
         self.assertFalse(p.has_path('/foo'))
         self.assertEqual(p.get('/foo', default='_notfound_'), '_notfound_')
-        self.assertListEqual(p.redirects('/quux'), [])
+        self.assertListEqual(p.redirects('/bar'), [])
 
+    def test_storage_chain(self):
         # Update a redirect in a chain
+        p = RedirectionStorage()
         p.add('/fred', '/foo')
         self.assertEqual(p.get('/fred'), '/foo')
         self.assertListEqual(sorted(p.redirects('/foo')), ['/fred'])
@@ -70,19 +85,37 @@ class TestStorage(unittest.TestCase):
         )
         self.assertListEqual(sorted(p.redirects('/barney')), [])
 
+    def test_storage_destroy_target(self):
         # Destroy the target of a redirect
+        p = RedirectionStorage()
+        p.add('/fred', '/barney')
+        p.add('/barney', '/wilma')
         p.destroy('/wilma')
         self.assertFalse(p.has_path('/barney'))
         self.assertFalse(p.has_path('/fred'))
         self.assertListEqual(p.redirects('/wilma'), [])
 
+    def test_storage_iterator(self):
         # We can get an iterator over all existing paths
+        p = RedirectionStorage()
+        self.assertListEqual(sorted(iter(p)), [])
+
+        # Add one
+        p.add('/baz', '/bar')
         self.assertListEqual(sorted(iter(p)), ['/baz'])
 
         # Now add some more
         p.add('/foo', '/bar')
         p.add('/barney', '/wilma')
         self.assertListEqual(sorted(p), ['/barney', '/baz', '/foo'])
+
+    def test_storage_no_circular(self):
+        # Circular references are ignored
+        p = RedirectionStorage()
+        p.add('/circle', '/circle')
+        self.assertFalse(p.has_path('/circle'))
+        self.assertEqual(p.get('/circle', '_marker_'), '_marker_')
+        self.assertListEqual(p.redirects('/circle'), [])
 
     def test_storage_three_step_circular_rename(self):
         # What about three step circular rename ?
