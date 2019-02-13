@@ -109,3 +109,6 @@ class RedirectionStorage(Persistent):
 
     def __iter__(self):
         return iter(self._paths)
+
+    def __len__(self):
+        return len(self._paths)

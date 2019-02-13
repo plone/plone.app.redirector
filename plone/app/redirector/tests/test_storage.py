@@ -200,6 +200,20 @@ class TestStorage(unittest.TestCase):
         st.add('/barney', '/wilma')
         self.assertListEqual(sorted(st), ['/barney', '/baz', '/foo'])
 
+    def test_storage_len(self):
+        # We can get the length of the storage (number of old paths).
+        st = RedirectionStorage()
+        self.assertEqual(len(st), 0)
+
+        # Add one
+        st['/baz'] = '/bar'
+        self.assertEqual(len(st), 1)
+
+        # Now add some more
+        st['/foo'] = '/bar'
+        st['/barney'] = '/wilma'
+        self.assertEqual(len(st), 3)
+
     def test_storage_no_circular(self):
         # Circular references are ignored
         st = RedirectionStorage()
