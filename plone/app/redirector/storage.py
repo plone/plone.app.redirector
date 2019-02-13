@@ -59,6 +59,8 @@ class RedirectionStorage(Persistent):
         self._paths[old_path] = new_path
         self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
 
+    __setitem__ = add
+
     def remove(self, old_path):
         old_path = self._canonical(old_path)
         new_path = self._paths.get(old_path, None)
@@ -68,6 +70,8 @@ class RedirectionStorage(Persistent):
             else:
                 self._rpaths[new_path].remove(old_path)
         del self._paths[old_path]
+
+    __delitem__ = remove
 
     def destroy(self, new_path):
         new_path = self._canonical(new_path)

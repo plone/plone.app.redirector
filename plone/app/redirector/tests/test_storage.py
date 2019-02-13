@@ -84,11 +84,23 @@ class TestStorage(unittest.TestCase):
         with self.assertRaises(KeyError):
             st['/baaz']
 
-    def test_storage_two_redirects(self):
+    def test_storage_two_redirects_plain(self):
         # Add multiple redirects.
         st = RedirectionStorage()
         st.add('/foo', '/bar')
         st.add('/baz', '/bar')
+        self.assertTrue(st.has_path('/baz'))
+        self.assertEqual(st.get('/baz'), '/bar')
+        self.assertListEqual(sorted(st.redirects('/bar')), ['/baz', '/foo'])
+        self.assertIn('/foo', st)
+        self.assertIn('/baz', st)
+        self.assertNotIn('/bar', st)
+
+    def test_storage_two_redirects_pythonic(self):
+        # Add multiple redirects.
+        st = RedirectionStorage()
+        st['/foo'] = '/bar'
+        st['/baz'] = '/bar'
         self.assertTrue(st.has_path('/baz'))
         self.assertEqual(st.get('/baz'), '/bar')
         self.assertListEqual(sorted(st.redirects('/bar')), ['/baz', '/foo'])
@@ -108,7 +120,7 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('/quux'), ['/foo'])
         self.assertIn('/foo', st)
 
-    def test_storage_remove_redirect(self):
+    def test_storage_remove_redirect_plain(self):
         # Remove a redirect
         st = RedirectionStorage()
         st.add('/foo', '/bar')
@@ -117,6 +129,28 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st.get('/foo', default='_notfound_'), '_notfound_')
         self.assertListEqual(st.redirects('/bar'), [])
         self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st.remove('/foo')
+
+    def test_storage_remove_redirect_pythonic(self):
+        # Remove a redirect
+        st = RedirectionStorage()
+        st['/foo'] = '/bar'
+        self.assertIn('/foo', st)
+        del st['/foo']
+        self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st['/foo']
+        self.assertListEqual(st.redirects('/bar'), [])
+
+        # test with extra slash
+        st['/foo'] = '/bar'
+        self.assertIn('/foo', st)
+        del st['/foo/']
+        self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st['/foo/']
+        self.assertListEqual(st.redirects('/bar'), [])
 
     def test_storage_chain(self):
         # Update a redirect in a chain
