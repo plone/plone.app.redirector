@@ -20,6 +20,29 @@ class TestStorage(unittest.TestCase):
         self.assertFalse(p.has_path('/bar'))
         self.assertListEqual(p.redirects('/bar'), ['/foo'])
 
+    def test_storage_no_slash(self):
+        # Standard Plone will created redirects with key
+        # /plone-site-id/some/path.
+        # But a slash at the beginning is not mandatory.
+        p = RedirectionStorage()
+        self.assertFalse(p.has_path('foo'))
+        p.add('foo', 'bar')
+        self.assertTrue(p.has_path('foo'))
+        self.assertEqual(p.get('foo'), 'bar')
+        self.assertFalse(p.has_path('bar'))
+        self.assertListEqual(p.redirects('bar'), ['foo'])
+
+    def test_storage_nested(self):
+        # Since Plone will created redirects with key
+        # /plone-site-id/some/path, testing with multiple slashes seems wise.
+        p = RedirectionStorage()
+        self.assertFalse(p.has_path('/plone/some/path'))
+        p.add('/plone/some/path', '/plone/a/different/path')
+        self.assertTrue(p.has_path('/plone/some/path'))
+        self.assertEqual(p.get('/plone/some/path'), '/plone/a/different/path')
+        self.assertFalse(p.has_path('/plone/a/different/path'))
+        self.assertListEqual(p.redirects('/plone/a/different/path'), ['/plone/some/path'])
+
     def test_storage_trailing_slash(self):
         # trailing slashes are ignored
         p = RedirectionStorage()
