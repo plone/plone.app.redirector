@@ -7,6 +7,9 @@ from BTrees.OOBTree import OOBTree, OOSet
 from plone.app.redirector.interfaces import IRedirectionStorage
 
 
+_marker = object()
+
+
 @implementer(IRedirectionStorage)
 class RedirectionStorage(Persistent):
     """Stores old paths to new paths.
@@ -84,6 +87,12 @@ class RedirectionStorage(Persistent):
     def get(self, old_path, default=None):
         old_path = self._canonical(old_path)
         return self._paths.get(old_path, default)
+
+    def __getitem__(self, old_path):
+        result = self.get(old_path, default=_marker)
+        if result is _marker:
+            raise KeyError(old_path)
+        return result
 
     def redirects(self, new_path):
         new_path = self._canonical(new_path)

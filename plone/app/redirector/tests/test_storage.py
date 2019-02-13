@@ -21,6 +21,9 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('/bar'), ['/foo'])
         self.assertIn('/foo', st)
         self.assertNotIn('/bar', st)
+        self.assertEqual(st['/foo'], '/bar')
+        with self.assertRaises(KeyError):
+            st['/bar']
 
     def test_storage_no_slash(self):
         # Standard Plone will created redirects with key
@@ -35,6 +38,9 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('bar'), ['foo'])
         self.assertIn('foo', st)
         self.assertNotIn('bar', st)
+        self.assertEqual(st['foo'], 'bar')
+        with self.assertRaises(KeyError):
+            st['bar']
 
     def test_storage_nested(self):
         # Since Plone will created redirects with key
@@ -48,6 +54,9 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('/plone/a/different/path'), ['/plone/some/path'])
         self.assertIn('/plone/some/path', st)
         self.assertNotIn('/plone/a/different/path', st)
+        self.assertEqual(st['/plone/some/path'], '/plone/a/different/path')
+        with self.assertRaises(KeyError):
+            st['/plone/a/different/path']
 
     def test_storage_trailing_slash(self):
         # trailing slashes are ignored
@@ -59,6 +68,9 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('/bar/'), ['/foo'])
         self.assertIn('/foo/', st)
         self.assertNotIn('/bar/', st)
+        self.assertEqual(st['/foo/'], '/bar')
+        with self.assertRaises(KeyError):
+            st['/bar/']
 
         # This goes the other way around too
         self.assertFalse(st.has_path('/quux'))
@@ -68,6 +80,9 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('/baaz'), ['/quux'])
         self.assertIn('/quux', st)
         self.assertNotIn('/baaz', st)
+        self.assertEqual(st['/quux'], '/baaz')
+        with self.assertRaises(KeyError):
+            st['/baaz']
 
     def test_storage_two_redirects(self):
         # Add multiple redirects.

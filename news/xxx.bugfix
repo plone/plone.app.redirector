@@ -1,2 +1,3 @@
 Support using the 'in' operator for paths.
+Support using storage[old_path] to get the new path, possibly raising KeyError.
 [maurits]
