@@ -272,6 +272,13 @@ class TestStorage(unittest.TestCase):
         self.assertListEqual(st.redirects('second'), [])
         self.assertListEqual(st.redirects('third'), [])
 
+    def test_storage_non_string_path_fails(self):
+        st = RedirectionStorage()
+        with self.assertRaises(AttributeError):
+            st[0] = '/bar'
+        with self.assertRaises(AttributeError):
+            st['/foo'] = 0
+
 
 def test_suite():
     suite = unittest.TestSuite()
