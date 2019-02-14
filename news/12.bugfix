@@ -1,2 +1,3 @@
 Turned doctests into unittests.
+Removed no longer needed test_suite functions.
 [maurits]

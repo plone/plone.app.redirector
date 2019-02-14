@@ -134,9 +134,3 @@ class TestStoragePerformance(unittest.TestCase):
         ):
             for key in st:
                 st[key]
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestStoragePerformance))
-    return suite

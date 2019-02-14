@@ -291,9 +291,3 @@ class TestStorage(unittest.TestCase):
             st[0] = '/bar'
         with self.assertRaises(AttributeError):
             st['/foo'] = 0
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestStorage))
-    return suite

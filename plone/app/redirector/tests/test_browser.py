@@ -57,9 +57,3 @@ class TestBrowser(unittest.TestCase):
         self.browser.getControl('Rename').click()
         self.assertListEqual(list(storage), ['/plone/foo'])
         self.assertEqual(storage.get('/plone/foo'), '/plone/bar')
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestBrowser))
-    return suite
