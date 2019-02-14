@@ -3,7 +3,7 @@ from zope.interface import implementer
 
 from persistent import Persistent
 from BTrees.OOBTree import OOBTree, OOSet
-
+from DateTime import DateTime
 from plone.app.redirector.interfaces import IRedirectionStorage
 
 
@@ -32,8 +32,9 @@ class RedirectionStorage(Persistent):
         # but making them fresh seems cleaner and faster.
         self._paths = OOBTree()
         self._rpaths = OOBTree()
+        self._dates = OOBTree()
 
-    def add(self, old_path, new_path):
+    def add(self, old_path, new_path, now=None):
         old_path = self._canonical(old_path)
         new_path = self._canonical(new_path)
 
@@ -56,6 +57,7 @@ class RedirectionStorage(Persistent):
                 self._rpaths.setdefault(new_path, OOSet()).insert(p)
             else:
                 del self._paths[new_path]
+                self._dates.pop(new_path, None)
 
         # Remove reverse paths for old_path
         if old_path in self._rpaths:
@@ -63,12 +65,16 @@ class RedirectionStorage(Persistent):
 
         self._paths[old_path] = new_path
         self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
+        if now is None:
+            now = DateTime()
+        self._dates[old_path] = now
 
     __setitem__ = add
 
     def update(self, info):
+        now = DateTime()
         for key, value in info.items():
-            self.add(key, value)
+            self.add(key, value, now=now)
 
     def remove(self, old_path):
         old_path = self._canonical(old_path)
@@ -79,14 +85,26 @@ class RedirectionStorage(Persistent):
             else:
                 self._rpaths[new_path].remove(old_path)
         del self._paths[old_path]
+        # _dates are a new addition, so be forgiving when nothing is found.
+        # We can create a method for setting a date for all in migration.
+        self._dates.pop(old_path, None)
 
     __delitem__ = remove
+
+    def _rebuild_dates(self):
+        # Rebuild the _dates information.
+        # Can be used in migration to initialize the _dates.
+        now = DateTime()
+        self._dates.clear()
+        for path in self._paths:
+            self._dates[path] = now
 
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
         for p in self._rpaths.get(new_path, []):
             if p in self._paths:
                 del self._paths[p]
+                self._dates.pop(p, None)
         if new_path in self._rpaths:
             if new_path in self._rpaths:
                 del self._rpaths[new_path]
