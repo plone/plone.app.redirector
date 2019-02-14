@@ -19,6 +19,11 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st.get('/foo'), '/bar')
         self.assertFalse(st.has_path('/bar'))
         self.assertListEqual(st.redirects('/bar'), ['/foo'])
+        self.assertIn('/foo', st)
+        self.assertNotIn('/bar', st)
+        self.assertEqual(st['/foo'], '/bar')
+        with self.assertRaises(KeyError):
+            st['/bar']
 
     def test_storage_no_slash(self):
         # Standard Plone will created redirects with key
@@ -31,6 +36,11 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st.get('foo'), 'bar')
         self.assertFalse(st.has_path('bar'))
         self.assertListEqual(st.redirects('bar'), ['foo'])
+        self.assertIn('foo', st)
+        self.assertNotIn('bar', st)
+        self.assertEqual(st['foo'], 'bar')
+        with self.assertRaises(KeyError):
+            st['bar']
 
     def test_storage_nested(self):
         # Since Plone will created redirects with key
@@ -42,6 +52,11 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st.get('/plone/some/path'), '/plone/a/different/path')
         self.assertFalse(st.has_path('/plone/a/different/path'))
         self.assertListEqual(st.redirects('/plone/a/different/path'), ['/plone/some/path'])
+        self.assertIn('/plone/some/path', st)
+        self.assertNotIn('/plone/a/different/path', st)
+        self.assertEqual(st['/plone/some/path'], '/plone/a/different/path')
+        with self.assertRaises(KeyError):
+            st['/plone/a/different/path']
 
     def test_storage_trailing_slash(self):
         # trailing slashes are ignored
@@ -51,6 +66,11 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(st.has_path('/foo/'))
         self.assertEqual(st.get('/foo/'), '/bar')
         self.assertListEqual(st.redirects('/bar/'), ['/foo'])
+        self.assertIn('/foo/', st)
+        self.assertNotIn('/bar/', st)
+        self.assertEqual(st['/foo/'], '/bar')
+        with self.assertRaises(KeyError):
+            st['/bar/']
 
         # This goes the other way around too
         self.assertFalse(st.has_path('/quux'))
@@ -58,8 +78,13 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(st.has_path('/quux'))
         self.assertEqual(st.get('/quux'), '/baaz')
         self.assertListEqual(st.redirects('/baaz'), ['/quux'])
+        self.assertIn('/quux', st)
+        self.assertNotIn('/baaz', st)
+        self.assertEqual(st['/quux'], '/baaz')
+        with self.assertRaises(KeyError):
+            st['/baaz']
 
-    def test_storage_two_redirects(self):
+    def test_storage_two_redirects_plain(self):
         # Add multiple redirects.
         st = RedirectionStorage()
         st.add('/foo', '/bar')
@@ -67,6 +92,21 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(st.has_path('/baz'))
         self.assertEqual(st.get('/baz'), '/bar')
         self.assertListEqual(sorted(st.redirects('/bar')), ['/baz', '/foo'])
+        self.assertIn('/foo', st)
+        self.assertIn('/baz', st)
+        self.assertNotIn('/bar', st)
+
+    def test_storage_two_redirects_pythonic(self):
+        # Add multiple redirects.
+        st = RedirectionStorage()
+        st['/foo'] = '/bar'
+        st['/baz'] = '/bar'
+        self.assertTrue(st.has_path('/baz'))
+        self.assertEqual(st.get('/baz'), '/bar')
+        self.assertListEqual(sorted(st.redirects('/bar')), ['/baz', '/foo'])
+        self.assertIn('/foo', st)
+        self.assertIn('/baz', st)
+        self.assertNotIn('/bar', st)
 
     def test_storage_update_redirect(self):
         # Update a redirect
@@ -78,14 +118,38 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st.get('/foo'), '/quux')
         self.assertListEqual(st.redirects('/bar'), ['/baz'])
         self.assertListEqual(st.redirects('/quux'), ['/foo'])
+        self.assertIn('/foo', st)
 
-    def test_storage_remove_redirect(self):
+    def test_storage_remove_redirect_plain(self):
         # Remove a redirect
         st = RedirectionStorage()
         st.add('/foo', '/bar')
         st.remove('/foo')
         self.assertFalse(st.has_path('/foo'))
         self.assertEqual(st.get('/foo', default='_notfound_'), '_notfound_')
+        self.assertListEqual(st.redirects('/bar'), [])
+        self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st.remove('/foo')
+
+    def test_storage_remove_redirect_pythonic(self):
+        # Remove a redirect
+        st = RedirectionStorage()
+        st['/foo'] = '/bar'
+        self.assertIn('/foo', st)
+        del st['/foo']
+        self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st['/foo']
+        self.assertListEqual(st.redirects('/bar'), [])
+
+        # test with extra slash
+        st['/foo'] = '/bar'
+        self.assertIn('/foo', st)
+        del st['/foo/']
+        self.assertNotIn('/foo', st)
+        with self.assertRaises(KeyError):
+            st['/foo/']
         self.assertListEqual(st.redirects('/bar'), [])
 
     def test_storage_chain(self):
@@ -107,6 +171,8 @@ class TestStorage(unittest.TestCase):
             sorted(st.redirects('/wilma')), ['/barney', '/fred']
         )
         self.assertListEqual(sorted(st.redirects('/barney')), [])
+        self.assertIn('/fred', st)
+        self.assertIn('/barney', st)
 
     def test_storage_destroy_target(self):
         # Destroy the target of a redirect
@@ -117,6 +183,8 @@ class TestStorage(unittest.TestCase):
         self.assertFalse(st.has_path('/barney'))
         self.assertFalse(st.has_path('/fred'))
         self.assertListEqual(st.redirects('/wilma'), [])
+        self.assertNotIn('/fred', st)
+        self.assertNotIn('/barney', st)
 
     def test_storage_iterator(self):
         # We can get an iterator over all existing paths
@@ -132,6 +200,20 @@ class TestStorage(unittest.TestCase):
         st.add('/barney', '/wilma')
         self.assertListEqual(sorted(st), ['/barney', '/baz', '/foo'])
 
+    def test_storage_len(self):
+        # We can get the length of the storage (number of old paths).
+        st = RedirectionStorage()
+        self.assertEqual(len(st), 0)
+
+        # Add one
+        st['/baz'] = '/bar'
+        self.assertEqual(len(st), 1)
+
+        # Now add some more
+        st['/foo'] = '/bar'
+        st['/barney'] = '/wilma'
+        self.assertEqual(len(st), 3)
+
     def test_storage_no_circular(self):
         # Circular references are ignored
         st = RedirectionStorage()
@@ -139,6 +221,7 @@ class TestStorage(unittest.TestCase):
         self.assertFalse(st.has_path('/circle'))
         self.assertEqual(st.get('/circle', '_marker_'), '_marker_')
         self.assertListEqual(st.redirects('/circle'), [])
+        self.assertNotIn('/circle', st)
 
     def test_storage_three_step_circular_rename(self):
         # What about three step circular rename ?
@@ -180,6 +263,9 @@ class TestStorage(unittest.TestCase):
         self.assertIsNone(st.get('first'))
         self.assertEqual(st.get('second'), 'first')
         self.assertEqual(st.get('third'), 'first')
+        self.assertNotIn('first', st)
+        self.assertIn('second', st)
+        self.assertIn('third', st)
 
         # And same for the back references.
         self.assertListEqual(st.redirects('first'), ['second', 'third'])
