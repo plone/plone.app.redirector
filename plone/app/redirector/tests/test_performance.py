@@ -87,8 +87,10 @@ class TestStoragePerformance(unittest.TestCase):
             for i in range(num):
                 st['/old/{0}'.format(i)] = '/new/{0}'.format(i)
 
-        # Should be almost instantaneous.
-        with self.timeit('Clearing storage'):
+        # I expected this to be almost instantaneous because we replace
+        # the data with new OOBTrees, but it still takes time:
+        # for ten million items it take 0.3 seconds.
+        with self.timeit('Clearing storage', num / 1000000.0):
             st.clear()
 
         # Should be fairly quick.
