@@ -100,10 +100,10 @@ class TestStoragePerformance(unittest.TestCase):
             ),
             NUMBER / 100000.0,
         ):
-            # Prepare input:
-            info = {}
-            for i in range(NUMBER):
-                info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+            info = {
+                '/old/{0}'.format(i): '/new/{0}'.format(i)
+                for i in range(NUMBER)
+            }
 
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit(
