@@ -21,6 +21,16 @@ else:
     VERBOSE = False
 
 
+def pretty_number(num):
+    if num < 1000:
+        return num
+    num = int(num / 1000)
+    if num < 1000:
+        return '{0} thousand'.format(num)
+    num = int(num / 1000)
+    return '{0} million'.format(num)
+
+
 class TestStoragePerformance(unittest.TestCase):
     """Test the performance of the RedirectionStorage class.
     """
@@ -66,7 +76,7 @@ class TestStoragePerformance(unittest.TestCase):
         st = RedirectionStorage()
         if VERBOSE:
             print('\nRunning plone.app.redirector storage performance tests.')
-            print('Inserting {0} paths...'.format(NUMBER))
+            print('Inserting {0} paths...'.format(pretty_number(NUMBER)))
 
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit('Inserting', NUMBER / 10000.0):
