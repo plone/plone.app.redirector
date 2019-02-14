@@ -5,6 +5,7 @@ from persistent import Persistent
 from BTrees.OOBTree import OOBTree, OOSet
 from DateTime import DateTime
 from plone.app.redirector.interfaces import IRedirectionStorage
+from six import string_types
 
 
 _marker = object()
@@ -33,9 +34,14 @@ class RedirectionStorage(Persistent):
         self._paths = OOBTree()
         self._rpaths = OOBTree()
         self._dates = OOBTree()
+        self._manual = OOSet()
 
     def add(self, old_path, new_path, now=None):
         old_path = self._canonical(old_path)
+        manual = False
+        if not isinstance(new_path, string_types):
+            manual = new_path[1]
+            new_path = new_path[0]
         new_path = self._canonical(new_path)
 
         if old_path == new_path:
@@ -56,8 +62,17 @@ class RedirectionStorage(Persistent):
                 self._paths[p] = new_path
                 self._rpaths.setdefault(new_path, OOSet()).insert(p)
             else:
+                # There is an existing redirect from new_path to old_path.
+                # We now want to update new_path to point to new_path.
+                # This is not useful, so we delete it.
                 del self._paths[new_path]
                 self._dates.pop(new_path, None)
+                try:
+                    self._manual.remove(new_path)
+                except KeyError:
+                    # First testing 'new_path in self._manual' looks nicer
+                    # but is probably slower.
+                    pass
 
         # Remove reverse paths for old_path
         if old_path in self._rpaths:
@@ -68,6 +83,9 @@ class RedirectionStorage(Persistent):
         if now is None:
             now = DateTime()
         self._dates[old_path] = now
+        if manual:
+            # The added redirect is a manual one.
+            self._manual.add(old_path)
 
     __setitem__ = add
 
@@ -88,6 +106,10 @@ class RedirectionStorage(Persistent):
         # _dates are a new addition, so be forgiving when nothing is found.
         # We can create a method for setting a date for all in migration.
         self._dates.pop(old_path, None)
+        try:
+            self._manual.remove(old_path)
+        except KeyError:
+            pass
 
     __delitem__ = remove
 
@@ -105,6 +127,10 @@ class RedirectionStorage(Persistent):
             if p in self._paths:
                 del self._paths[p]
                 self._dates.pop(p, None)
+                try:
+                    self._manual.remove(p)
+                except KeyError:
+                    pass
         if new_path in self._rpaths:
             if new_path in self._rpaths:
                 del self._rpaths[new_path]

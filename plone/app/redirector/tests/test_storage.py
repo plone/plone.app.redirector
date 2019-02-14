@@ -290,5 +290,5 @@ class TestStorage(unittest.TestCase):
         st = RedirectionStorage()
         with self.assertRaises(AttributeError):
             st[0] = '/bar'
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(TypeError):
             st['/foo'] = 0
