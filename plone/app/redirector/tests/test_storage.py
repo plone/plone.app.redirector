@@ -108,6 +108,19 @@ class TestStorage(unittest.TestCase):
         self.assertIn('/baz', st)
         self.assertNotIn('/bar', st)
 
+    def test_storage_clear(self):
+        # Clear all information.
+        st = RedirectionStorage()
+        st['/foo'] = '/bar'
+        st['/baz'] = '/bar'
+        st.clear()
+        self.assertNotIn('/foo', st)
+        self.assertNotIn('/baz', st)
+        self.assertEqual(len(st.redirects('/bar')), 0)
+        # Test the internal structures directly
+        self.assertEqual(len(st._paths), 0)
+        self.assertEqual(len(st._rpaths), 0)
+
     def test_storage_update_redirect(self):
         # Update a redirect
         st = RedirectionStorage()

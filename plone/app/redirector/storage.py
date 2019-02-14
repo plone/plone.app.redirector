@@ -25,6 +25,11 @@ class RedirectionStorage(Persistent):
     """
 
     def __init__(self):
+        self.clear()
+
+    def clear(self):
+        # If the data already exists, we could call 'clear' on all BTrees,
+        # but making them fresh seems cleaner and faster.
         self._paths = OOBTree()
         self._rpaths = OOBTree()
 
