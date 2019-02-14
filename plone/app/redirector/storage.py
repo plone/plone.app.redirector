@@ -66,6 +66,10 @@ class RedirectionStorage(Persistent):
 
     __setitem__ = add
 
+    def update(self, info):
+        for key, value in info.items():
+            self.add(key, value)
+
     def remove(self, old_path):
         old_path = self._canonical(old_path)
         new_path = self._paths.get(old_path, None)

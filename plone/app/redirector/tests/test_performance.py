@@ -76,12 +76,45 @@ class TestStoragePerformance(unittest.TestCase):
         st = RedirectionStorage()
         if VERBOSE:
             print('\nRunning plone.app.redirector storage performance tests.')
-            print('Inserting {0} paths...'.format(pretty_number(NUMBER)))
 
         # Can take long.  But 10.000 per second should be no problem.
-        with self.timeit('Inserting', NUMBER / 10000.0):
-            for i in range(NUMBER):
+        # Take one tenth of the items at first.
+        num = max(int(NUMBER / 10), 1)
+        with self.timeit(
+            'Inserting {0} individual items'.format(pretty_number(num)),
+            num / 10000.0,
+        ):
+            for i in range(num):
                 st['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+
+        # Should be almost instantaneous.
+        with self.timeit('Clearing storage'):
+            st.clear()
+
+        # Should be fairly quick.
+        with self.timeit(
+            'Preparing {0} items for bulk import'.format(
+                pretty_number(NUMBER)
+            ),
+            NUMBER / 100000.0,
+        ):
+            # Prepare input:
+            info = {}
+            for i in range(NUMBER):
+                info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+
+        # Can take long.  But 10.000 per second should be no problem.
+        with self.timeit(
+            'Inserting {0} prepared items in bulk'.format(
+                pretty_number(NUMBER)
+            ),
+            NUMBER / 10000.0,
+        ):
+            # Prepare input:
+            info = {}
+            for i in range(NUMBER):
+                info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+            st.update(info)
 
         # Should be almost instantaneous.
         with self.timeit('Getting length'):
