@@ -204,9 +204,3 @@ class TestRedirectorView(unittest.TestCase):
         urls = sorted([b.getURL() for b in view.search_for_similar()])
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + '/f2', urls[0])
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestRedirectorView))
-    return suite

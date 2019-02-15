@@ -154,9 +154,3 @@ class TestRedirectorEvents(unittest.TestCase):
         self.folder.invokeFactory('Document', 'p1')
         transaction.savepoint(1)
         self.assertEqual(0, len(list(self.storage)) - orig_len)
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestRedirectorEvents))
-    return suite

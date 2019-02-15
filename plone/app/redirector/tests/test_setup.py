@@ -24,9 +24,3 @@ class TestRedirectorSetup(unittest.TestCase):
     def test_view(self):
         view = self.portal.restrictedTraverse('@@plone_redirector_view')
         self.assertNotEqual(None, view)
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestRedirectorSetup))
-    return suite
