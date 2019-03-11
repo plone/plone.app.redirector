@@ -120,7 +120,6 @@ class TestStorage(unittest.TestCase):
         # Test the internal structures directly
         self.assertEqual(len(st._paths), 0)
         self.assertEqual(len(st._rpaths), 0)
-        self.assertEqual(len(st._dates), 0)
 
     def test_storage_update_redirect(self):
         # Update a redirect
