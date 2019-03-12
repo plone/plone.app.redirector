@@ -33,7 +33,7 @@ class RedirectionStorage(Persistent):
         self._paths = OOBTree()
         self._rpaths = OOBTree()
 
-    def add(self, old_path, new_path, now=None):
+    def add(self, old_path, new_path, now=None, manual=False):
         old_path = self._canonical(old_path)
         new_path = self._canonical(new_path)
 
@@ -51,20 +51,24 @@ class RedirectionStorage(Persistent):
 
         if now is None:
             now = DateTime()
-        full_value = (new_path, now)
+        full_value = (new_path, now, manual)
 
         # Update any references that pointed to old_path
         for p in self.redirects(old_path):
             if p != new_path:
                 old_full_value = self._paths[p]
                 if isinstance(old_full_value, tuple):
-                    # keep date
-                    new_full_value = (new_path, old_full_value[1])
+                    # keep date and manual
+                    new_full_value = (
+                        new_path, old_full_value[1], old_full_value[2])
                 else:
                     new_full_value = full_value
                 self._paths[p] = new_full_value
                 self._rpaths.setdefault(new_path, OOSet()).insert(p)
             else:
+                # There is an existing redirect from new_path to old_path.
+                # We now want to update new_path to point to new_path.
+                # This is not useful, so we delete it.
                 del self._paths[new_path]
 
         # Remove reverse paths for old_path
@@ -76,10 +80,12 @@ class RedirectionStorage(Persistent):
 
     __setitem__ = add
 
-    def update(self, info):
+    def update(self, info, manual=True):
+        # Bulk update information.
+        # Calling update will usually be done for manual additions (csv upload).
         now = DateTime()
         for key, value in info.items():
-            self.add(key, value, now=now)
+            self.add(key, value, now=now, manual=manual)
 
     def remove(self, old_path):
         old_path = self._canonical(old_path)
@@ -93,15 +99,18 @@ class RedirectionStorage(Persistent):
 
     __delitem__ = remove
 
-    def _rebuild_dates(self):
-        # Rebuild the dates information.
+    def _rebuild(self):
+        # Rebuild the information.
         # Can be used in migration to initialize the dates.
         now = DateTime()
         for path in self._paths:
             new_path = self._paths[path]
             if isinstance(new_path, tuple):
                 continue
-            self._paths[path] = (new_path, now)       
+            # Store as tuple: (new_path, date, manual).
+            # We cannot know if this was a manual redirect or not.
+            # For safety we register this as a manual one.
+            self._paths[path] = (new_path, now, True)
 
     def destroy(self, new_path):
         new_path = self._canonical(new_path)

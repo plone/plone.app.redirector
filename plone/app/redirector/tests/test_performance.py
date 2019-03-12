@@ -139,6 +139,6 @@ class TestStoragePerformance(unittest.TestCase):
 
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit(
-            'Rebuilding the dates structure for migration', NUMBER / 100000.0
+            'Rebuilding the structure for migration', NUMBER / 100000.0
         ):
-            st._rebuild_dates()
+            st._rebuild()
