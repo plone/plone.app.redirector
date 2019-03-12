@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from DateTime import DateTime
 from plone.app.redirector.storage import RedirectionStorage
 
 import unittest
@@ -83,6 +84,63 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st['/quux'], '/baaz')
         with self.assertRaises(KeyError):
             st['/baaz']
+
+    def test_storage_date(self):
+        # Add one redirect
+        st = RedirectionStorage()
+        time1 = DateTime()
+        st.add('/foo', '/bar')
+        time2 = DateTime()
+        # Check the internals: we now store a date (and manual True/False).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertTrue(time1 < info[1] < time2)
+        # Use an explicit date.
+        now = DateTime(2000, 12, 31)
+        st.add('/exp', '/bar', now=now)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertEqual(info[1], now)
+        # Update with a different date.
+        st.add('/exp', '/bar', now=time1)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertEqual(info[1], time1)
+        # Update with an implicit date.
+        st.add('/exp', '/bar')
+        time3 = DateTime()
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertTrue(time2 < info[1] < time3)
+
+    def test_storage_manual(self):
+        # Add one redirect
+        st = RedirectionStorage()
+        st.add('/foo', '/bar')
+        # Check the internals: we now store manual True/False (and a date).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertFalse(info[2])
+        # Store a manual one.
+        st.add('/exp', '/bar', manual=True)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertTrue(info[2])
+        # Update to non-manual (the default).
+        st.add('/exp', '/bar')
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertFalse(info[2])
+        # Make the original non-manual one manual.
+        st.add('/foo', '/bar', manual=True)
+        # Check the internals: we now store manual True/False (and a date).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertTrue(info[2])
 
     def test_storage_two_redirects_plain(self):
         # Add multiple redirects.
