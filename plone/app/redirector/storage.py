@@ -100,17 +100,31 @@ class RedirectionStorage(Persistent):
     __delitem__ = remove
 
     def _rebuild(self):
-        # Rebuild the information.
-        # Can be used in migration to initialize the dates.
+        """Rebuild the information.
+
+        Can be used in migration to initialize the date and manual information.
+
+        For good measure, this also rebuild the _rpaths structure:
+        the _paths structure is leading.  For one million paths,
+        the _paths rebuilding takes 1 second,
+        and the _rpaths an extra 3 seconds.  Seems fine, as this should
+        rarely be used.
+        """
         now = DateTime()
-        for path in self._paths:
-            new_path = self._paths[path]
-            if isinstance(new_path, tuple):
-                continue
-            # Store as tuple: (new_path, date, manual).
-            # We cannot know if this was a manual redirect or not.
-            # For safety we register this as a manual one.
-            self._paths[path] = (new_path, now, True)
+        self._rpaths = OOBTree()
+        for old_path in self._paths:
+            new_info = self._paths[old_path]
+            if isinstance(new_info, tuple):
+                new_path = new_info[0]
+            else:
+                # Store as tuple: (new_path, date, manual).
+                # We cannot know if this was a manual redirect or not.
+                # For safety we register this as a manual one.
+                new_path = new_info
+                new_info = (new_path, now, True)
+                self._paths[old_path] = new_info
+            self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
+
 
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
