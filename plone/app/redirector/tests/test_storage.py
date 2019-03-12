@@ -52,7 +52,9 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(st.has_path('/plone/some/path'))
         self.assertEqual(st.get('/plone/some/path'), '/plone/a/different/path')
         self.assertFalse(st.has_path('/plone/a/different/path'))
-        self.assertListEqual(st.redirects('/plone/a/different/path'), ['/plone/some/path'])
+        self.assertListEqual(
+            st.redirects('/plone/a/different/path'), ['/plone/some/path']
+        )
         self.assertIn('/plone/some/path', st)
         self.assertNotIn('/plone/a/different/path', st)
         self.assertEqual(st['/plone/some/path'], '/plone/a/different/path')

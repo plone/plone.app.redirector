@@ -42,8 +42,7 @@ class RedirectionStorage(Persistent):
 
         # Forget any existing reverse paths to old_path
         existing_target = self.get(old_path)
-        if (existing_target is not None) and (
-            existing_target in self._rpaths):
+        if (existing_target is not None) and (existing_target in self._rpaths):
             if len(self._rpaths[existing_target]) == 1:
                 del self._rpaths[existing_target]
             else:
@@ -60,7 +59,10 @@ class RedirectionStorage(Persistent):
                 if isinstance(old_full_value, tuple):
                     # keep date and manual
                     new_full_value = (
-                        new_path, old_full_value[1], old_full_value[2])
+                        new_path,
+                        old_full_value[1],
+                        old_full_value[2],
+                    )
                 else:
                     new_full_value = full_value
                 self._paths[p] = new_full_value
@@ -124,7 +126,6 @@ class RedirectionStorage(Persistent):
                 new_info = (new_path, now, True)
                 self._paths[old_path] = new_info
             self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
-
 
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
