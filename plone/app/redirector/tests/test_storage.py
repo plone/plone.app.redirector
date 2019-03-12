@@ -351,3 +351,53 @@ class TestStorage(unittest.TestCase):
             st[0] = '/bar'
         with self.assertRaises(AttributeError):
             st['/foo'] = 0
+
+    def test_rebuild(self):
+        # Rebuild the internal information.
+        # This is mostly meant to be used in migration
+        # to initialize the date and manual information.
+        st = RedirectionStorage()
+        # Should run fine on an empty storage.
+        st._rebuild()
+        # Set internals directly.
+        st._paths['/old'] = '/new'
+        st._paths['/older'] = '/new'
+        st._rpaths['/unused'] = '/unknown'
+        self.assertIsInstance(st._paths['/old'], str)
+        self.assertEqual(st._paths['/old'], '/new')
+        self.assertEqual(len(st._paths), 2)
+        self.assertEqual(len(st._rpaths), 1)
+
+        # Rebuild
+        time1 = DateTime()
+        st._rebuild()
+        time2 = DateTime()
+        # The _paths should be tuples now
+        self.assertEqual(len(st._paths), 2)
+        info = st._paths['/old']
+        self.assertIsInstance(info, tuple)
+        # Both were pointing to /new, and that should stay the same
+        self.assertSetEqual(set([path[0] for path in st._paths.values()]), set(['/new']))
+        # Date should be set to the same for all.
+        self.assertIsInstance(info[1], DateTime)
+        new_time = info[1]
+        self.assertTrue(time1 < new_time < time2)
+        self.assertSetEqual(set([path[1] for path in st._paths.values()]), set([new_time]))
+        # manual is set to True when migrating to tuples:
+        self.assertEqual(info[2], True)
+        # _rpaths should be filled now with only the new one.
+        self.assertEqual(len(st._rpaths), 1)
+        self.assertNotIn('/unused', st._rpaths)
+        self.assertEqual(list(st._rpaths['/new']), ['/old', '/older'])
+
+        # Rebuild again.  Nothing fundamentally should have changed,
+        # except that the _rpaths have been recreated.
+        old_paths = st._paths
+        old_rpaths = st._rpaths
+        st._rebuild()
+        self.assertIs(old_paths, st._paths)
+        self.assertIsNot(old_rpaths, st._rpaths)
+        self.assertEqual(list(old_rpaths), list(st._rpaths))
+        self.assertSetEqual(set([path[0] for path in st._paths.values()]), set(['/new']))
+        self.assertSetEqual(set([path[1] for path in st._paths.values()]), set([new_time]))
+        self.assertSetEqual(set([path[2] for path in st._paths.values()]), set([True]))
