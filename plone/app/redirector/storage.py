@@ -133,6 +133,24 @@ class RedirectionStorage(Persistent):
                 self._paths[old_path] = new_info
             self._rpaths.setdefault(new_path, OOSet()).insert(old_path)
 
+        # Look for inconsistenties and fix them:
+        # paths that are both in paths and in rpaths.
+        bads = [
+            new_path for new_path in self._rpaths if new_path in self._paths
+        ]
+        for new_path in bads:
+            newer_path = self._paths[new_path][0]
+            for old_path in self._rpaths[new_path]:
+                # old_path points to new_path,
+                # but new_path points to newer_path.
+                # So update old_path to point to newer_path.
+                info = self._paths[old_path]
+                info = (newer_path, info[1], info[2])
+                self._paths[old_path] = info
+                self._rpaths[newer_path].insert(old_path)
+            # self._rpaths[new_path] is empty now
+            del self._rpaths[new_path]
+
     def destroy(self, new_path):
         new_path = self._canonical(new_path)
         for p in self._rpaths.get(new_path, []):

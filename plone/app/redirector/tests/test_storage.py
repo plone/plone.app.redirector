@@ -362,42 +362,69 @@ class TestStorage(unittest.TestCase):
         # Set internals directly.
         st._paths['/old'] = '/new'
         st._paths['/older'] = '/new'
+        st._paths['/first'] = '/second'
         st._rpaths['/unused'] = '/unknown'
+        # Add some bad redirects, which should have been updated to point to /new.
+        st._paths['/bad'] = '/old'
+        st._paths['/worse'] = '/old'
+        st._paths['/worst'] = '/worse'
         self.assertIsInstance(st._paths['/old'], str)
         self.assertEqual(st._paths['/old'], '/new')
-        self.assertEqual(len(st._paths), 2)
+        self.assertEqual(len(st._paths), 6)
         self.assertEqual(len(st._rpaths), 1)
 
         # Rebuild
         time1 = DateTime()
         st._rebuild()
         time2 = DateTime()
-        # The _paths should be tuples now
-        self.assertEqual(len(st._paths), 2)
+        # The _paths should be tuples now.
+        self.assertEqual(
+            sorted(list(st._paths)),
+            ['/bad', '/first', '/old', '/older', '/worse', '/worst'],
+        )
         info = st._paths['/old']
         self.assertIsInstance(info, tuple)
-        # Both were pointing to /new, and that should stay the same
-        self.assertSetEqual(set([path[0] for path in st._paths.values()]), set(['/new']))
+        # The good ones were pointing to /new or /second, which should stay the same,
+        # but the bad ones have been updated to point to new as well.
+        self.assertSetEqual(
+            set([path[0] for path in st._paths.values()]),
+            set(['/new', '/second']),
+        )
         # Date should be set to the same for all.
         self.assertIsInstance(info[1], DateTime)
         new_time = info[1]
         self.assertTrue(time1 < new_time < time2)
-        self.assertSetEqual(set([path[1] for path in st._paths.values()]), set([new_time]))
+        self.assertSetEqual(
+            set([path[1] for path in st._paths.values()]), set([new_time])
+        )
         # manual is set to True when migrating to tuples:
         self.assertEqual(info[2], True)
         # _rpaths should be filled now with only the new one.
-        self.assertEqual(len(st._rpaths), 1)
+        self.assertEqual(len(st._rpaths), 2)
         self.assertNotIn('/unused', st._rpaths)
-        self.assertEqual(list(st._rpaths['/new']), ['/old', '/older'])
+        self.assertEqual(sorted(list(st._rpaths['/second'])), ['/first'])
+        self.assertEqual(
+            sorted(list(st._rpaths['/new'])),
+            ['/bad', '/old', '/older', '/worse', '/worst'],
+        )
 
         # Rebuild again.  Nothing fundamentally should have changed,
-        # except that the _rpaths have been recreated.
+        # except that _rpaths have been recreated.
         old_paths = st._paths
         old_rpaths = st._rpaths
         st._rebuild()
         self.assertIs(old_paths, st._paths)
         self.assertIsNot(old_rpaths, st._rpaths)
-        self.assertEqual(list(old_rpaths), list(st._rpaths))
-        self.assertSetEqual(set([path[0] for path in st._paths.values()]), set(['/new']))
-        self.assertSetEqual(set([path[1] for path in st._paths.values()]), set([new_time]))
-        self.assertSetEqual(set([path[2] for path in st._paths.values()]), set([True]))
+        self.assertListEqual(
+            sorted(list(old_rpaths)), sorted(list(st._rpaths))
+        )
+        self.assertSetEqual(
+            set([path[0] for path in st._paths.values()]),
+            set(['/new', '/second']),
+        )
+        self.assertSetEqual(
+            set([path[1] for path in st._paths.values()]), set([new_time])
+        )
+        self.assertSetEqual(
+            set([path[2] for path in st._paths.values()]), set([True])
+        )
