@@ -43,6 +43,8 @@ class RedirectionStorage(Persistent):
         # Forget any existing reverse paths to old_path
         existing_target = self.get(old_path)
         if (existing_target is not None) and (existing_target in self._rpaths):
+            # old_path was pointing to existing_target, but now we want it to
+            # point to new_path.  So remove the existing reverse path.
             if len(self._rpaths[existing_target]) == 1:
                 del self._rpaths[existing_target]
             else:
@@ -54,6 +56,8 @@ class RedirectionStorage(Persistent):
 
         # Update any references that pointed to old_path
         for p in self.redirects(old_path):
+            # p points to old_path, but old_path will point to new_path,
+            # so we update p to point to new_path directly.
             if p != new_path:
                 old_full_value = self._paths[p]
                 if isinstance(old_full_value, tuple):
@@ -73,7 +77,9 @@ class RedirectionStorage(Persistent):
                 # This is not useful, so we delete it.
                 del self._paths[new_path]
 
-        # Remove reverse paths for old_path
+        # Remove reverse paths for old_path.  If old_path was being
+        # redirected to, the above code will have updated those redirects,
+        # so this reverse redirect info is no longer needed.
         if old_path in self._rpaths:
             del self._rpaths[old_path]
 
