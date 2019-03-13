@@ -175,9 +175,17 @@ class RedirectionStorage(Persistent):
         old_path = self._canonical(old_path)
         new_path = self._paths.get(old_path, default)
         if isinstance(new_path, tuple):
-            # (new_path, date)
+            # (new_path, date, manual)
             return new_path[0]
         return new_path
+
+    def get_full(self, old_path, default=None):
+        old_path = self._canonical(old_path)
+        new_path = self._paths.get(old_path, default)
+        if isinstance(new_path, tuple):
+            # (new_path, date, manual)
+            return new_path
+        return (new_path, None, True)
 
     def __getitem__(self, old_path):
         result = self.get(old_path, default=_marker)
