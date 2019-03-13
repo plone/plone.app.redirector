@@ -93,7 +93,12 @@ class RedirectionStorage(Persistent):
         # Calling update will usually be done for manual additions (csv upload).
         now = DateTime()
         for key, value in info.items():
-            self.add(key, value, now=now, manual=manual)
+            if isinstance(value, tuple):
+                # This is (new path, datetime, manual),
+                # where datetime may be None.
+                self.add(key, value[0], now=value[1] or now, manual=value[2])
+            else:
+                self.add(key, value, now=now, manual=manual)
 
     def remove(self, old_path):
         old_path = self._canonical(old_path)
