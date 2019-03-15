@@ -377,6 +377,109 @@ class TestStorage(unittest.TestCase):
         with self.assertRaises(AttributeError):
             st['/foo'] = 0
 
+    def test_storage_update_paths(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        for i in range(10):
+            info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+        st.update(info)
+        time2 = DateTime()
+        self.assertEqual(len(st), 10)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertTrue(time1 < st.get_full('/old/0')[1] < time2)
+        self.assertTrue(st.get_full('/old/0')[2])
+
+    def test_storage_update_tuple(self):
+        st = RedirectionStorage()
+        info = {}
+        for i in range(10):
+            info['/old/{0}'.format(i)] = (
+                '/new/{0}'.format(i),
+                DateTime(),
+                False,
+            )
+        st.update(info)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertEqual(st.get_full('/old/0'), info['/old/0'])
+
+    def test_storage_update_keeps_info(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        time2 = DateTime()
+        info['/old/1'] = ('/new', time1, False)
+        info['/old/2'] = ('/new', time2, True)
+        st.update(info)
+        self.assertEqual(len(st), 2)
+        self.assertEqual(st.get('/old/1'), '/new')
+        self.assertEqual(st.get('/old/2'), '/new')
+        self.assertListEqual(
+            sorted(st.redirects('/new')), ['/old/1', '/old/2']
+        )
+        self.assertEqual(st.get_full('/old/1'), info['/old/1'])
+        self.assertEqual(st.get_full('/old/2'), info['/old/2'])
+        # New info
+        del info['/old/1']
+        time3 = DateTime()
+        info['/old/2'] = ('/new/2', time2, False)
+        info['/old/3'] = ('/new', time3, True)
+        st.update(info)
+        self.assertEqual(len(st), 3)
+        self.assertEqual(st.get('/old/1'), '/new')
+        self.assertEqual(st.get('/old/2'), '/new/2')
+        self.assertEqual(st.get('/old/3'), '/new')
+        self.assertListEqual(
+            sorted(st.redirects('/new')), ['/old/1', '/old/3']
+        )
+        self.assertListEqual(sorted(st.redirects('/new/2')), ['/old/2'])
+        self.assertEqual(st.get_full('/old/2'), info['/old/2'])
+        self.assertEqual(st.get_full('/old/3'), info['/old/3'])
+
+    def test_storage_update_mixed(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        for i in range(10):
+            info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+        for i in range(10, 20):
+            info['/old/{0}'.format(i)] = (
+                '/new/{0}'.format(i),
+                DateTime(),
+                False,
+            )
+        for i in range(20, 30):
+            info['/old/{0}'.format(i)] = ('/new/{0}'.format(i), None, True)
+        st.update(info)
+        time2 = DateTime()
+        self.assertEqual(len(st), 30)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertTrue(time1 < st.get_full('/old/0')[1] < time2)
+        self.assertTrue(st.get_full('/old/0')[2])
+        self.assertEqual(st.get('/old/10'), '/new/10')
+        self.assertEqual(st.get('/old/11'), '/new/11')
+        self.assertEqual(st.get_full('/old/10'), info['/old/10'])
+        self.assertEqual(st.get('/old/20'), '/new/20')
+        self.assertEqual(st.get('/old/21'), '/new/21')
+        self.assertTrue(time1 < st.get_full('/old/20')[1] < time2)
+        self.assertTrue(st.get_full('/old/20')[2])
+        # Update again with the same info.
+        # This may set new dates.
+        st.update(info)
+        time3 = DateTime()
+        self.assertEqual(len(st), 30)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertTrue(time2 < st.get_full('/old/0')[1] < time3)
+        self.assertTrue(st.get_full('/old/0')[2])
+        self.assertEqual(st.get('/old/10'), '/new/10')
+        self.assertEqual(st.get_full('/old/10'), info['/old/10'])
+        self.assertEqual(st.get('/old/20'), '/new/20')
+        self.assertTrue(time2 < st.get_full('/old/20')[1] < time3)
+        self.assertTrue(st.get_full('/old/20')[2])
+
     def test_rebuild(self):
         # Rebuild the internal information.
         # This is mostly meant to be used in migration
