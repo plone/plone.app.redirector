@@ -26,6 +26,31 @@ class TestStorage(unittest.TestCase):
         with self.assertRaises(KeyError):
             st['/bar']
 
+    def test_storage_get_full_standard(self):
+        # get_full gets the full tuple instead of only the path
+        st = RedirectionStorage()
+        time1 = DateTime()
+        st.add('/foo', '/bar', now=time1, manual=False)
+        full = st.get_full('/foo')
+        self.assertIsInstance(full, tuple)
+        self.assertEqual(full, st._paths['/foo'])
+        self.assertEqual(full[0], '/bar')
+        self.assertEqual(full[1], time1)
+        self.assertFalse(full[2])  # manual
+
+    def test_storage_get_full_fallback(self):
+        # get_full gets the full tuple,
+        # even if the unmigrated data only has the path
+        st = RedirectionStorage()
+        st._paths['/foo'] = '/bar'
+        self.assertEqual(st._paths['/foo'], '/bar')
+        full = st.get_full('/foo')
+        self.assertIsInstance(full, tuple)
+        self.assertEqual(full[0], '/bar')
+        # Instead of a DateTime, we get None in the fallback
+        self.assertIsNone(full[1])
+        self.assertTrue(full[2])  # manual
+
     def test_storage_no_slash(self):
         # Standard Plone will created redirects with key
         # /plone-site-id/some/path.
