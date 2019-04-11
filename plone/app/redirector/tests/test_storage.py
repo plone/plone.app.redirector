@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from DateTime import DateTime
 from plone.app.redirector.storage import RedirectionStorage
 
 import unittest
@@ -24,6 +25,31 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st['/foo'], '/bar')
         with self.assertRaises(KeyError):
             st['/bar']
+
+    def test_storage_get_full_standard(self):
+        # get_full gets the full tuple instead of only the path
+        st = RedirectionStorage()
+        time1 = DateTime()
+        st.add('/foo', '/bar', now=time1, manual=False)
+        full = st.get_full('/foo')
+        self.assertIsInstance(full, tuple)
+        self.assertEqual(full, st._paths['/foo'])
+        self.assertEqual(full[0], '/bar')
+        self.assertEqual(full[1], time1)
+        self.assertFalse(full[2])  # manual
+
+    def test_storage_get_full_fallback(self):
+        # get_full gets the full tuple,
+        # even if the unmigrated data only has the path
+        st = RedirectionStorage()
+        st._paths['/foo'] = '/bar'
+        self.assertEqual(st._paths['/foo'], '/bar')
+        full = st.get_full('/foo')
+        self.assertIsInstance(full, tuple)
+        self.assertEqual(full[0], '/bar')
+        # Instead of a DateTime, we get None in the fallback
+        self.assertIsNone(full[1])
+        self.assertTrue(full[2])  # manual
 
     def test_storage_no_slash(self):
         # Standard Plone will created redirects with key
@@ -51,7 +77,9 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(st.has_path('/plone/some/path'))
         self.assertEqual(st.get('/plone/some/path'), '/plone/a/different/path')
         self.assertFalse(st.has_path('/plone/a/different/path'))
-        self.assertListEqual(st.redirects('/plone/a/different/path'), ['/plone/some/path'])
+        self.assertListEqual(
+            st.redirects('/plone/a/different/path'), ['/plone/some/path']
+        )
         self.assertIn('/plone/some/path', st)
         self.assertNotIn('/plone/a/different/path', st)
         self.assertEqual(st['/plone/some/path'], '/plone/a/different/path')
@@ -83,6 +111,63 @@ class TestStorage(unittest.TestCase):
         self.assertEqual(st['/quux'], '/baaz')
         with self.assertRaises(KeyError):
             st['/baaz']
+
+    def test_storage_date(self):
+        # Add one redirect
+        st = RedirectionStorage()
+        time1 = DateTime()
+        st.add('/foo', '/bar')
+        time2 = DateTime()
+        # Check the internals: we now store a date (and manual True/False).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertTrue(time1 < info[1] < time2)
+        # Use an explicit date.
+        now = DateTime(2000, 12, 31)
+        st.add('/exp', '/bar', now=now)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertEqual(info[1], now)
+        # Update with a different date.
+        st.add('/exp', '/bar', now=time1)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertEqual(info[1], time1)
+        # Update with an implicit date.
+        st.add('/exp', '/bar')
+        time3 = DateTime()
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertTrue(time2 < info[1] < time3)
+
+    def test_storage_manual(self):
+        # Add one redirect
+        st = RedirectionStorage()
+        st.add('/foo', '/bar')
+        # Check the internals: we now store manual True/False (and a date).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertFalse(info[2])
+        # Store a manual one.
+        st.add('/exp', '/bar', manual=True)
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertTrue(info[2])
+        # Update to non-manual (the default).
+        st.add('/exp', '/bar')
+        info = st._paths['/exp']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertFalse(info[2])
+        # Make the original non-manual one manual.
+        st.add('/foo', '/bar', manual=True)
+        # Check the internals: we now store manual True/False (and a date).
+        info = st._paths['/foo']
+        self.assertIsInstance(info, tuple)
+        self.assertIsInstance(info[2], bool)
+        self.assertTrue(info[2])
 
     def test_storage_two_redirects_plain(self):
         # Add multiple redirects.
@@ -291,3 +376,183 @@ class TestStorage(unittest.TestCase):
             st[0] = '/bar'
         with self.assertRaises(AttributeError):
             st['/foo'] = 0
+
+    def test_storage_update_paths(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        for i in range(10):
+            info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+        st.update(info)
+        time2 = DateTime()
+        self.assertEqual(len(st), 10)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertTrue(time1 < st.get_full('/old/0')[1] < time2)
+        self.assertTrue(st.get_full('/old/0')[2])
+
+    def test_storage_update_tuple(self):
+        st = RedirectionStorage()
+        info = {}
+        for i in range(10):
+            info['/old/{0}'.format(i)] = (
+                '/new/{0}'.format(i),
+                DateTime(),
+                False,
+            )
+        st.update(info)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertEqual(st.get_full('/old/0'), info['/old/0'])
+
+    def test_storage_update_keeps_info(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        time2 = DateTime()
+        info['/old/1'] = ('/new', time1, False)
+        info['/old/2'] = ('/new', time2, True)
+        st.update(info)
+        self.assertEqual(len(st), 2)
+        self.assertEqual(st.get('/old/1'), '/new')
+        self.assertEqual(st.get('/old/2'), '/new')
+        self.assertListEqual(
+            sorted(st.redirects('/new')), ['/old/1', '/old/2']
+        )
+        self.assertEqual(st.get_full('/old/1'), info['/old/1'])
+        self.assertEqual(st.get_full('/old/2'), info['/old/2'])
+        # New info
+        del info['/old/1']
+        time3 = DateTime()
+        info['/old/2'] = ('/new/2', time2, False)
+        info['/old/3'] = ('/new', time3, True)
+        st.update(info)
+        self.assertEqual(len(st), 3)
+        self.assertEqual(st.get('/old/1'), '/new')
+        self.assertEqual(st.get('/old/2'), '/new/2')
+        self.assertEqual(st.get('/old/3'), '/new')
+        self.assertListEqual(
+            sorted(st.redirects('/new')), ['/old/1', '/old/3']
+        )
+        self.assertListEqual(sorted(st.redirects('/new/2')), ['/old/2'])
+        self.assertEqual(st.get_full('/old/2'), info['/old/2'])
+        self.assertEqual(st.get_full('/old/3'), info['/old/3'])
+
+    def test_storage_update_mixed(self):
+        st = RedirectionStorage()
+        info = {}
+        time1 = DateTime()
+        for i in range(10):
+            info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+        for i in range(10, 20):
+            info['/old/{0}'.format(i)] = (
+                '/new/{0}'.format(i),
+                DateTime(),
+                False,
+            )
+        for i in range(20, 30):
+            info['/old/{0}'.format(i)] = ('/new/{0}'.format(i), None, True)
+        st.update(info)
+        time2 = DateTime()
+        self.assertEqual(len(st), 30)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertEqual(st.get('/old/1'), '/new/1')
+        self.assertTrue(time1 < st.get_full('/old/0')[1] < time2)
+        self.assertTrue(st.get_full('/old/0')[2])
+        self.assertEqual(st.get('/old/10'), '/new/10')
+        self.assertEqual(st.get('/old/11'), '/new/11')
+        self.assertEqual(st.get_full('/old/10'), info['/old/10'])
+        self.assertEqual(st.get('/old/20'), '/new/20')
+        self.assertEqual(st.get('/old/21'), '/new/21')
+        self.assertTrue(time1 < st.get_full('/old/20')[1] < time2)
+        self.assertTrue(st.get_full('/old/20')[2])
+        # Update again with the same info.
+        # This may set new dates.
+        st.update(info)
+        time3 = DateTime()
+        self.assertEqual(len(st), 30)
+        self.assertEqual(st.get('/old/0'), '/new/0')
+        self.assertTrue(time2 < st.get_full('/old/0')[1] < time3)
+        self.assertTrue(st.get_full('/old/0')[2])
+        self.assertEqual(st.get('/old/10'), '/new/10')
+        self.assertEqual(st.get_full('/old/10'), info['/old/10'])
+        self.assertEqual(st.get('/old/20'), '/new/20')
+        self.assertTrue(time2 < st.get_full('/old/20')[1] < time3)
+        self.assertTrue(st.get_full('/old/20')[2])
+
+    def test_rebuild(self):
+        # Rebuild the internal information.
+        # This is mostly meant to be used in migration
+        # to initialize the date and manual information.
+        st = RedirectionStorage()
+        # Should run fine on an empty storage.
+        st._rebuild()
+        # Set internals directly.
+        st._paths['/old'] = '/new'
+        st._paths['/older'] = '/new'
+        st._paths['/first'] = '/second'
+        st._rpaths['/unused'] = '/unknown'
+        # Add some bad redirects, which should have been updated to point to /new.
+        st._paths['/bad'] = '/old'
+        st._paths['/worse'] = '/old'
+        st._paths['/worst'] = '/worse'
+        self.assertIsInstance(st._paths['/old'], str)
+        self.assertEqual(st._paths['/old'], '/new')
+        self.assertEqual(len(st._paths), 6)
+        self.assertEqual(len(st._rpaths), 1)
+
+        # Rebuild
+        time1 = DateTime()
+        st._rebuild()
+        time2 = DateTime()
+        # The _paths should be tuples now.
+        self.assertEqual(
+            sorted(list(st._paths)),
+            ['/bad', '/first', '/old', '/older', '/worse', '/worst'],
+        )
+        info = st._paths['/old']
+        self.assertIsInstance(info, tuple)
+        # The good ones were pointing to /new or /second, which should stay the same,
+        # but the bad ones have been updated to point to new as well.
+        self.assertSetEqual(
+            set([path[0] for path in st._paths.values()]),
+            set(['/new', '/second']),
+        )
+        # Date should be set to the same for all.
+        self.assertIsInstance(info[1], DateTime)
+        new_time = info[1]
+        self.assertTrue(time1 < new_time < time2)
+        self.assertSetEqual(
+            set([path[1] for path in st._paths.values()]), set([new_time])
+        )
+        # manual is set to True when migrating to tuples:
+        self.assertEqual(info[2], True)
+        # _rpaths should be filled now with only the new one.
+        self.assertEqual(len(st._rpaths), 2)
+        self.assertNotIn('/unused', st._rpaths)
+        self.assertEqual(sorted(list(st._rpaths['/second'])), ['/first'])
+        self.assertEqual(
+            sorted(list(st._rpaths['/new'])),
+            ['/bad', '/old', '/older', '/worse', '/worst'],
+        )
+
+        # Rebuild again.  Nothing fundamentally should have changed,
+        # except that _rpaths have been recreated.
+        old_paths = st._paths
+        old_rpaths = st._rpaths
+        st._rebuild()
+        self.assertIs(old_paths, st._paths)
+        self.assertIsNot(old_rpaths, st._rpaths)
+        self.assertListEqual(
+            sorted(list(old_rpaths)), sorted(list(st._rpaths))
+        )
+        self.assertSetEqual(
+            set([path[0] for path in st._paths.values()]),
+            set(['/new', '/second']),
+        )
+        self.assertSetEqual(
+            set([path[1] for path in st._paths.values()]), set([new_time])
+        )
+        self.assertSetEqual(
+            set([path[2] for path in st._paths.values()]), set([True])
+        )

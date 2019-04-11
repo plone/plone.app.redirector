@@ -136,3 +136,9 @@ class TestStoragePerformance(unittest.TestCase):
         ):
             for key in st:
                 st[key]
+
+        # Can take long.  But 10.000 per second should be no problem.
+        with self.timeit(
+            'Rebuilding the structure for migration', NUMBER / 100000.0
+        ):
+            st._rebuild()
