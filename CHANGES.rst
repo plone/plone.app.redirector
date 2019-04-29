@@ -8,6 +8,19 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.0 (2019-04-29)
+------------------
+
+New features:
+
+
+- Store date information in the paths.
+  Can be used as basis for removing for example all redirects that are older than a year.
+  [maurits] (#17)
+- Keep track if a redirect was added manually or automatically.
+  [maurits] (#18)
+
+
 2.0.1 (2019-03-03)
 ------------------
 
