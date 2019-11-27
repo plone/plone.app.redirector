@@ -41,10 +41,11 @@ class TestStoragePerformance(unittest.TestCase):
         yield
         end = time()
         total = end - start
-        # Allow taking at least 0.1 seconds.  Otherwise a really low NUMBER
+        # Allow taking at least 0.3 seconds.  Otherwise a really low NUMBER
         # like 0 may give errors like this:
         # AssertionError: Listing all takes too long: 0.00 seconds (max 1e-06)
-        limit = max(limit, 0.1)
+        # Also, Jenkins might be busy running multiple jobs in parallel.
+        limit = max(limit, 0.3)
         if total > limit:
             self.fail(
                 '{0} takes too long: {1:.2f} seconds (max {2})'.format(

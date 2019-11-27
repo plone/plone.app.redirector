@@ -1,0 +1,3 @@
+Allow performance tests to take more time.
+This seems needed on the Plone Jenkins test server when jobs are run in parallel.
+[maurits]
