@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.1 (2019-12-10)
+------------------
+
+Bug fixes:
+
+
+- Allow performance tests to take more time.
+  This seems needed on the Plone Jenkins test server when jobs are run in parallel.
+  [maurits] (#20)
+
+
 2.1.0 (2019-04-29)
 ------------------
 
