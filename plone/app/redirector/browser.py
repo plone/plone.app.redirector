@@ -84,7 +84,17 @@ class FourOhFourView(BrowserView):
         # some analytics programs might use this info to track
         if query_string:
             url += "?" + query_string
-        self.request.response.redirect(url, status=301, lock=1)
+
+        # Answer GET requests with 302 (Found). Every other method will be answered
+        # with 307 (Temporary Redirect), which instructs the client to NOT
+        # switch the method (if the original request was a POST, it should
+        # re-POST to the new URL from the Location header).
+        if self.request.method.upper() == "GET":
+            status = 302
+        else:
+            status = 307
+
+        self.request.response.redirect(url, status=status, lock=1)
         return True
 
     def find_redirect_if_view(self, old_path_elements, storage):

@@ -38,7 +38,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar',
             self.request.response.getHeader('location'))
 
@@ -48,7 +48,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/view')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar/view',
             self.request.response.getHeader('location'))
 
@@ -58,7 +58,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/@@view/part')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar/@@view/part',
             self.request.response.getHeader('location'))
 
@@ -66,13 +66,13 @@ class TestRedirectorView(unittest.TestCase):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '/foo')
         self.assertEqual(False, view.attempt_redirect())
-        self.assertNotEqual(301, self.request.response.getStatus())
+        self.assertNotEqual(302, self.request.response.getStatus())
 
     def test_attempt_redirect_with_unknown_url_with_illegal_characters(self):
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + '+LÃ¤nder')
         self.assertEqual(False, view.attempt_redirect())
-        self.assertNotEqual(301, self.request.response.getStatus())
+        self.assertNotEqual(302, self.request.response.getStatus())
 
     def test_attempt_redirect_with_quoted_url(self):
         fp = '/'.join(self.folder.getPhysicalPath())
@@ -80,7 +80,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo/baz%20quux')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar/baz%20quux',
             self.request.response.getHeader('location'))
 
@@ -90,7 +90,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo?blah=blah', fp + '/bar')
         view = self.view(self.portal, fu + '/foo', 'blah=blah')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar',
             self.request.response.getHeader('location'))
 
@@ -100,7 +100,7 @@ class TestRedirectorView(unittest.TestCase):
         self.storage.add(fp + '/foo', fp + '/bar')
         view = self.view(self.portal, fu + '/foo', 'blah=blah')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual(fu + '/bar?blah=blah',
             self.request.response.getHeader('location'))
 
@@ -111,7 +111,7 @@ class TestRedirectorView(unittest.TestCase):
                          'http://otherhost' + fp + '/bar%20qux corge')
         view = self.view(self.portal, fu + '/foo')
         self.assertEqual(True, view.attempt_redirect())
-        self.assertEqual(301, self.request.response.getStatus())
+        self.assertEqual(302, self.request.response.getStatus())
         self.assertEqual('http://otherhost' + fp + '/bar%20qux%20corge',
             self.request.response.getHeader('location'))
 
