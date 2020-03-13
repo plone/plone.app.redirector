@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.0 (2020-03-13)
+------------------
+
+New features:
+
+
+- The http status of the response is changed from 301 (Moved Permanently) to 302 (Found) for GET requests and to 307 (Temporary Redirect) for other request methods because nothing prevents the URL to be reused in the future. [ale-rt] (#8)
+
+
 2.1.1 (2019-12-10)
 ------------------
 
