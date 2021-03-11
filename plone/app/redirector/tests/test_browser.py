@@ -43,7 +43,7 @@ class TestBrowser(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='++add++Document').click()
         self.browser.getControl(
-            name='form.widgets.IDublinCore.title'
+            name='form.widgets.title'
         ).value = 'Foo'
         self.browser.getControl('Save').click()
         self.assertIn('Item created', self.browser.contents)
