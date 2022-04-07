@@ -7,7 +7,7 @@ import os
 import unittest
 
 
-env_name = 'PLONE_APP_REDIRECTOR_PERFORMANCE_NUMBER'
+env_name = "PLONE_APP_REDIRECTOR_PERFORMANCE_NUMBER"
 if env_name in os.environ:
     # This could fail with a ValueError, but that seems a fine error message.
     NUMBER = max(int(os.getenv(env_name)), 1)
@@ -26,14 +26,13 @@ def pretty_number(num):
         return num
     num = int(num / 1000)
     if num < 1000:
-        return '{0} thousand'.format(num)
+        return "{0} thousand".format(num)
     num = int(num / 1000)
-    return '{0} million'.format(num)
+    return "{0} million".format(num)
 
 
 class TestStoragePerformance(unittest.TestCase):
-    """Test the performance of the RedirectionStorage class.
-    """
+    """Test the performance of the RedirectionStorage class."""
 
     @contextmanager
     def timeit(self, message, limit=0):
@@ -48,14 +47,12 @@ class TestStoragePerformance(unittest.TestCase):
         limit = max(limit, 0.3)
         if total > limit:
             self.fail(
-                '{0} takes too long: {1:.2f} seconds (max {2})'.format(
+                "{0} takes too long: {1:.2f} seconds (max {2})".format(
                     message, total, limit
                 )
             )
         elif VERBOSE:
-            print(
-                '{0}: {1:.2f} seconds (max {2})'.format(message, total, limit)
-            )
+            print("{0}: {1:.2f} seconds (max {2})".format(message, total, limit))
 
     def test_storage_performance(self):
         """Test the performance of some of the code.
@@ -76,70 +73,59 @@ class TestStoragePerformance(unittest.TestCase):
         """
         st = RedirectionStorage()
         if VERBOSE:
-            print('\nRunning plone.app.redirector storage performance tests.')
+            print("\nRunning plone.app.redirector storage performance tests.")
 
         # Can take long.  But 10.000 per second should be no problem.
         # Take one tenth of the items at first.
         num = max(int(NUMBER / 10), 1)
         with self.timeit(
-            'Inserting {0} individual items'.format(pretty_number(num)),
+            "Inserting {0} individual items".format(pretty_number(num)),
             num / 10000.0,
         ):
             for i in range(num):
-                st['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+                st["/old/{0}".format(i)] = "/new/{0}".format(i)
 
         # I expected this to be almost instantaneous because we replace
         # the data with new OOBTrees, but it still takes time:
         # for ten million items it take 0.3 seconds.
-        with self.timeit('Clearing storage', num / 1000000.0):
+        with self.timeit("Clearing storage", num / 1000000.0):
             st.clear()
 
         # Should be fairly quick.
         with self.timeit(
-            'Preparing {0} items for bulk import'.format(
-                pretty_number(NUMBER)
-            ),
+            "Preparing {0} items for bulk import".format(pretty_number(NUMBER)),
             NUMBER / 100000.0,
         ):
-            info = {
-                '/old/{0}'.format(i): '/new/{0}'.format(i)
-                for i in range(NUMBER)
-            }
+            info = {"/old/{0}".format(i): "/new/{0}".format(i) for i in range(NUMBER)}
 
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit(
-            'Inserting {0} prepared items in bulk'.format(
-                pretty_number(NUMBER)
-            ),
+            "Inserting {0} prepared items in bulk".format(pretty_number(NUMBER)),
             NUMBER / 10000.0,
         ):
             # Prepare input:
             info = {}
             for i in range(NUMBER):
-                info['/old/{0}'.format(i)] = '/new/{0}'.format(i)
+                info["/old/{0}".format(i)] = "/new/{0}".format(i)
             st.update(info)
 
         # Should be almost instantaneous.
-        with self.timeit('Getting length'):
+        with self.timeit("Getting length"):
             self.assertEqual(len(st), NUMBER)
 
         # Should be almost instantaneous.
-        with self.timeit('Getting iterator'):
+        with self.timeit("Getting iterator"):
             iter(st)
 
         # Should be fairly quick.
-        with self.timeit('Listing all', NUMBER / 1000000.0):
+        with self.timeit("Listing all", NUMBER / 1000000.0):
             list(st)
 
         # Should be reasonably quick, but the time is noticeable.
-        with self.timeit(
-            'Listing and getting each single one', NUMBER / 100000.0
-        ):
+        with self.timeit("Listing and getting each single one", NUMBER / 100000.0):
             for key in st:
                 st[key]
 
         # Can take long.  But 10.000 per second should be no problem.
-        with self.timeit(
-            'Rebuilding the structure for migration', NUMBER / 100000.0
-        ):
+        with self.timeit("Rebuilding the structure for migration", NUMBER / 100000.0):
             st._rebuild()

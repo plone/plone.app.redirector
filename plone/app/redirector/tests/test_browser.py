@@ -24,14 +24,14 @@ class TestBrowser(unittest.TestCase):
     layer = PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING
 
     def setUp(self):
-        app = self.layer['app']
+        app = self.layer["app"]
         self.browser = Browser(app)
         self.browser.handleErrors = False
         self.browser.addHeader(
-            'Authorization',
-            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD),
+            "Authorization",
+            "Basic {0}:{1}".format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD),
         )
-        portal = self.layer['portal']
+        portal = self.layer["portal"]
         self.portal_url = portal.absolute_url()
 
     def test_no_redirect_on_creation(self):
@@ -41,19 +41,17 @@ class TestBrowser(unittest.TestCase):
 
         # Let's create an object and check again:
         self.browser.open(self.portal_url)
-        self.browser.getLink(url='++add++Document').click()
-        self.browser.getControl(
-            name='form.widgets.IDublinCore.title'
-        ).value = 'Foo'
-        self.browser.getControl('Save').click()
-        self.assertIn('Item created', self.browser.contents)
+        self.browser.getLink(url="++add++Document").click()
+        self.browser.getControl(name="form.widgets.IDublinCore.title").value = "Foo"
+        self.browser.getControl("Save").click()
+        self.assertIn("Item created", self.browser.contents)
         self.assertListEqual(list(storage), [])
 
         # However, if this object is renamed in a normal manner,
         # an entry should be created, of course:
-        self.browser.getLink('Rename').click()
-        self.browser.getControl('New Short Name').value = 'bar'
-        self.browser.getControl('New Title').value = 'Bar'
-        self.browser.getControl('Rename').click()
-        self.assertListEqual(list(storage), ['/plone/foo'])
-        self.assertEqual(storage.get('/plone/foo'), '/plone/bar')
+        self.browser.getLink("Rename").click()
+        self.browser.getControl("New Short Name").value = "bar"
+        self.browser.getControl("New Title").value = "Bar"
+        self.browser.getControl("Rename").click()
+        self.assertListEqual(list(storage), ["/plone/foo"])
+        self.assertEqual(storage.get("/plone/foo"), "/plone/bar")

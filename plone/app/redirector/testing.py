@@ -13,16 +13,16 @@ class PloneAppRedirector(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         import plone.app.redirector
+
         xmlconfig.file(
-            'configure.zcml',
-            plone.app.redirector,
-            context=configurationContext)
+            "configure.zcml", plone.app.redirector, context=configurationContext
+        )
 
 
 PLONE_APP_REDIRECTOR_FIXTURE = PloneAppRedirector()
 PLONE_APP_REDIRECTOR_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(PLONE_APP_REDIRECTOR_FIXTURE,),
-    name="PloneAppRedirector:Integration")
+    bases=(PLONE_APP_REDIRECTOR_FIXTURE,), name="PloneAppRedirector:Integration"
+)
 PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_REDIRECTOR_FIXTURE,),
-    name="PloneAppRedirector:Functional")
+    bases=(PLONE_APP_REDIRECTOR_FIXTURE,), name="PloneAppRedirector:Functional"
+)
