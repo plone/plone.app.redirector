@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a1 (2022-04-08)
+--------------------
+
+Breaking changes:
+
+
+- Plone 6 only, remove Archetypes specific code.
+  Also Code modernization (black, isort, pyupgrade).
+  [jensens] (modernize)
+
+
 2.2.1 (2020-04-20)
 ------------------
 
