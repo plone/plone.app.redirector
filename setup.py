@@ -26,7 +26,7 @@ setup(
     keywords="links redirect",
     author="Plone Foundation",
     author_email="plone-developers@lists.sourceforge.net",
-    url="https://pypi.org/project/plone.app.redirector",
+    url="https://github.com/plone/plone.app.redirector",
     license="GPL version 2",
     packages=find_packages(),
     namespace_packages=["plone", "plone.app"],
