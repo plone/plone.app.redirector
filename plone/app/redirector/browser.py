@@ -9,9 +9,9 @@ from Products.Five.browser import BrowserView
 from Products.ZCTextIndex.ParseTree import ParseError
 from Products.ZCTextIndex.ParseTree import QueryError
 from urllib.parse import quote
+from urllib.parse import SplitResult
 from urllib.parse import unquote
 from urllib.parse import urlsplit
-from urllib.parse import SplitResult
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import implementer

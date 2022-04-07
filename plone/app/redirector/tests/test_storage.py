@@ -515,9 +515,7 @@ class TestStorage(unittest.TestCase):
         self.assertIsInstance(info[1], DateTime)
         new_time = info[1]
         self.assertTrue(time1 < new_time < time2)
-        self.assertSetEqual(
-            {path[1] for path in st._paths.values()}, {new_time}
-        )
+        self.assertSetEqual({path[1] for path in st._paths.values()}, {new_time})
         # manual is set to True when migrating to tuples:
         self.assertEqual(info[2], True)
         # _rpaths should be filled now with only the new one.
@@ -541,7 +539,5 @@ class TestStorage(unittest.TestCase):
             {path[0] for path in st._paths.values()},
             {"/new", "/second"},
         )
-        self.assertSetEqual(
-            {path[1] for path in st._paths.values()}, {new_time}
-        )
+        self.assertSetEqual({path[1] for path in st._paths.values()}, {new_time})
         self.assertSetEqual({path[2] for path in st._paths.values()}, {True})

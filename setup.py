@@ -35,6 +35,7 @@ setup(
     install_requires=[
         "setuptools",
         "plone.memoize",
+        "Zope>=5",
     ],
     extras_require={"test": ["plone.app.testing", "plone.app.contenttypes"]},
 )
