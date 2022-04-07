@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-from zope.interface import implementer
-
-from persistent import Persistent
-from BTrees.OOBTree import OOBTree, OOSet
+from BTrees.OOBTree import OOBTree
+from BTrees.OOBTree import OOSet
 from DateTime import DateTime
+from persistent import Persistent
 from plone.app.redirector.interfaces import IRedirectionStorage
+from zope.interface import implementer
 
 
 _marker = object()
@@ -140,9 +139,7 @@ class RedirectionStorage(Persistent):
 
         # Look for inconsistenties and fix them:
         # paths that are both in paths and in rpaths.
-        bads = [
-            new_path for new_path in self._rpaths if new_path in self._paths
-        ]
+        bads = [new_path for new_path in self._rpaths if new_path in self._paths]
         for new_path in bads:
             newer_path = self._paths[new_path][0]
             for old_path in self._rpaths[new_path]:
@@ -198,7 +195,7 @@ class RedirectionStorage(Persistent):
         return [a for a in self._rpaths.get(new_path, [])]
 
     def _canonical(self, path):
-        if path.endswith('/'):
+        if path.endswith("/"):
             path = path[:-1]
         return path
 

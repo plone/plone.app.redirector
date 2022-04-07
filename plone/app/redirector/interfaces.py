@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
-from zope.interface import Interface, Attribute
+from zope.interface import Attribute
+from zope.interface import Interface
 
 
 class IRedirectionPolicy(Interface):
-    """An adapters that provides some policy about how redirects are performed
-    """
+    """An adapters that provides some policy about how redirects are performed"""
 
-    ignore_ids = Attribute("A list of ids to ignore when examining a URL "
-                            "for a potential redirection")
+    ignore_ids = Attribute(
+        "A list of ids to ignore when examining a URL " "for a potential redirection"
+    )
 
 
 class IFourOhFourView(Interface):
-    """A view that supports a useful 404 page
-    """
+    """A view that supports a useful 404 page"""
 
     def attempt_redirect():
         """Attempt to find a single appropriate redirection target by
@@ -54,8 +53,7 @@ class IRedirectionStorage(Interface):
         """
 
     def remove(old_path):
-        """Forget all redirects from old_path to any new path
-        """
+        """Forget all redirects from old_path to any new path"""
 
     def destroy(new_path):
         """Forget all redirects to new_path.
@@ -64,8 +62,7 @@ class IRedirectionStorage(Interface):
         """
 
     def has_path(old_path):
-        """Determine if there are any redirects from old_path in effect.
-        """
+        """Determine if there are any redirects from old_path in effect."""
 
     def get(old_path, default=None):
         """Get the new path to the object that used to be at old_path.

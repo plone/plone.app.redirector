@@ -13,6 +13,18 @@
         allowed_interface=".interfaces.IFourOhFourView"
         />
 
-    <include package="." file="events.zcml" />
+    <!-- Remember the movements of CMF objects -->
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
+        handler=".subscribers.objectMoved"
+        />
+
+    <subscriber
+        for="Products.CMFCore.interfaces.IContentish
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler=".subscribers.objectRemoved"
+        />
+
 
 </configure>
