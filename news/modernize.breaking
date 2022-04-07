@@ -1,0 +1,3 @@
+Plone 6 only, remove Archetypes specific code.
+Also Code modernization (black, isort, pyupgrade).
+[jensens]
