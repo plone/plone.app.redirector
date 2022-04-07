@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from DateTime import DateTime
 from plone.app.redirector.storage import RedirectionStorage
 
@@ -380,7 +379,7 @@ class TestStorage(unittest.TestCase):
         info = {}
         time1 = DateTime()
         for i in range(10):
-            info["/old/{0}".format(i)] = "/new/{0}".format(i)
+            info[f"/old/{i}"] = f"/new/{i}"
         st.update(info)
         time2 = DateTime()
         self.assertEqual(len(st), 10)
@@ -393,8 +392,8 @@ class TestStorage(unittest.TestCase):
         st = RedirectionStorage()
         info = {}
         for i in range(10):
-            info["/old/{0}".format(i)] = (
-                "/new/{0}".format(i),
+            info[f"/old/{i}"] = (
+                f"/new/{i}",
                 DateTime(),
                 False,
             )
@@ -437,15 +436,15 @@ class TestStorage(unittest.TestCase):
         info = {}
         time1 = DateTime()
         for i in range(10):
-            info["/old/{0}".format(i)] = "/new/{0}".format(i)
+            info[f"/old/{i}"] = f"/new/{i}"
         for i in range(10, 20):
-            info["/old/{0}".format(i)] = (
-                "/new/{0}".format(i),
+            info[f"/old/{i}"] = (
+                f"/new/{i}",
                 DateTime(),
                 False,
             )
         for i in range(20, 30):
-            info["/old/{0}".format(i)] = ("/new/{0}".format(i), None, True)
+            info[f"/old/{i}"] = (f"/new/{i}", None, True)
         st.update(info)
         time2 = DateTime()
         self.assertEqual(len(st), 30)
@@ -509,15 +508,15 @@ class TestStorage(unittest.TestCase):
         # The good ones were pointing to /new or /second, which should stay the same,
         # but the bad ones have been updated to point to new as well.
         self.assertSetEqual(
-            set([path[0] for path in st._paths.values()]),
-            set(["/new", "/second"]),
+            {path[0] for path in st._paths.values()},
+            {"/new", "/second"},
         )
         # Date should be set to the same for all.
         self.assertIsInstance(info[1], DateTime)
         new_time = info[1]
         self.assertTrue(time1 < new_time < time2)
         self.assertSetEqual(
-            set([path[1] for path in st._paths.values()]), set([new_time])
+            {path[1] for path in st._paths.values()}, {new_time}
         )
         # manual is set to True when migrating to tuples:
         self.assertEqual(info[2], True)
@@ -539,10 +538,10 @@ class TestStorage(unittest.TestCase):
         self.assertIsNot(old_rpaths, st._rpaths)
         self.assertListEqual(sorted(list(old_rpaths)), sorted(list(st._rpaths)))
         self.assertSetEqual(
-            set([path[0] for path in st._paths.values()]),
-            set(["/new", "/second"]),
+            {path[0] for path in st._paths.values()},
+            {"/new", "/second"},
         )
         self.assertSetEqual(
-            set([path[1] for path in st._paths.values()]), set([new_time])
+            {path[1] for path in st._paths.values()}, {new_time}
         )
-        self.assertSetEqual(set([path[2] for path in st._paths.values()]), set([True]))
+        self.assertSetEqual({path[2] for path in st._paths.values()}, {True})

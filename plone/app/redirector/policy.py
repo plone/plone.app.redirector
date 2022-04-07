@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.redirector.interfaces import IRedirectionPolicy
 from zope.component import adapts
 from zope.interface import implementer
@@ -6,7 +5,7 @@ from zope.interface import Interface
 
 
 @implementer(IRedirectionPolicy)
-class RedirectionPolicy(object):
+class RedirectionPolicy:
     adapts(Interface)
 
     def __init__(self, context):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from plone.app.redirector.interfaces import IRedirectionStorage
 from Products.CMFCore.utils import getToolByName
@@ -16,7 +15,7 @@ def objectMoved(obj, event):
     ):
         storage = queryUtility(IRedirectionStorage)
         if storage is not None:
-            old_path = "%s/%s" % (
+            old_path = "{}/{}".format(
                 "/".join(event.oldParent.getPhysicalPath()),
                 event.oldName,
             )

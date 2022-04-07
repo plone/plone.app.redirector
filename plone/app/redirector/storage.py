@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
 from DateTime import DateTime

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
 from zope.component import queryUtility

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING
 from plone.app.testing import SITE_OWNER_NAME
@@ -27,7 +26,7 @@ class TestBrowser(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD),
+            f"Basic {SITE_OWNER_NAME}:{SITE_OWNER_PASSWORD}",
         )
         portal = self.layer["portal"]
         self.portal_url = portal.absolute_url()

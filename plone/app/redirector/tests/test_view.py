@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
 from plone.app.testing import setRoles
@@ -145,7 +144,7 @@ class TestRedirectorView(unittest.TestCase):
         self.folder.f1.invokeFactory("Document", "p2")
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + "/f2/p1")
-        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        urls = sorted(b.getURL() for b in view.search_for_similar())
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + "/f1/p1", urls[0])
 
@@ -157,7 +156,7 @@ class TestRedirectorView(unittest.TestCase):
         self.folder.f1.invokeFactory("Document", "p3", title="view")
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + "/f2/p1/view")
-        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        urls = sorted(b.getURL() for b in view.search_for_similar())
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + "/f1/p1", urls[0])
 
@@ -168,7 +167,7 @@ class TestRedirectorView(unittest.TestCase):
         self.folder.f1.invokeFactory("Document", "p2")
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + "/f2/p1/f3")
-        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        urls = sorted(b.getURL() for b in view.search_for_similar())
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + "/f1/p1", urls[0])
 
@@ -179,7 +178,7 @@ class TestRedirectorView(unittest.TestCase):
         self.folder.f1.invokeFactory("Document", "p2")
         fu = self.folder.absolute_url()
         view = self.view(self.portal, fu + "/f2/p1/f3(")
-        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        urls = sorted(b.getURL() for b in view.search_for_similar())
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + "/f1/p1", urls[0])
 
@@ -200,6 +199,6 @@ class TestRedirectorView(unittest.TestCase):
         settings = registry.forInterface(ISearchSchema, prefix="plone")
         settings.types_not_searched = ("Document",)
         view = self.view(self.portal, fu + "/f2/p1")
-        urls = sorted([b.getURL() for b in view.search_for_similar()])
+        urls = sorted(b.getURL() for b in view.search_for_similar())
         self.assertEqual(1, len(urls))
         self.assertEqual(fu + "/f2", urls[0])

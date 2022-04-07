@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone.app.redirector.interfaces import IFourOhFourView
@@ -47,7 +45,7 @@ class FourOhFourView(BrowserView):
 
         query_string = self.request.QUERY_STRING
         if query_string:
-            new_path = storage.get("%s?%s" % (old_path, query_string))
+            new_path = storage.get(f"{old_path}?{query_string}")
             # if we matched on the query_string we don't want to include it
             # in redirect
             if new_path:

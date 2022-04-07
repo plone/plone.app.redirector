@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from contextlib import contextmanager
 from plone.app.redirector.storage import RedirectionStorage
 from time import time
@@ -26,9 +25,9 @@ def pretty_number(num):
         return num
     num = int(num / 1000)
     if num < 1000:
-        return "{0} thousand".format(num)
+        return f"{num} thousand"
     num = int(num / 1000)
-    return "{0} million".format(num)
+    return f"{num} million"
 
 
 class TestStoragePerformance(unittest.TestCase):
@@ -47,12 +46,12 @@ class TestStoragePerformance(unittest.TestCase):
         limit = max(limit, 0.3)
         if total > limit:
             self.fail(
-                "{0} takes too long: {1:.2f} seconds (max {2})".format(
+                "{} takes too long: {:.2f} seconds (max {})".format(
                     message, total, limit
                 )
             )
         elif VERBOSE:
-            print("{0}: {1:.2f} seconds (max {2})".format(message, total, limit))
+            print(f"{message}: {total:.2f} seconds (max {limit})")
 
     def test_storage_performance(self):
         """Test the performance of some of the code.
@@ -79,11 +78,11 @@ class TestStoragePerformance(unittest.TestCase):
         # Take one tenth of the items at first.
         num = max(int(NUMBER / 10), 1)
         with self.timeit(
-            "Inserting {0} individual items".format(pretty_number(num)),
+            f"Inserting {pretty_number(num)} individual items",
             num / 10000.0,
         ):
             for i in range(num):
-                st["/old/{0}".format(i)] = "/new/{0}".format(i)
+                st[f"/old/{i}"] = f"/new/{i}"
 
         # I expected this to be almost instantaneous because we replace
         # the data with new OOBTrees, but it still takes time:
@@ -93,20 +92,20 @@ class TestStoragePerformance(unittest.TestCase):
 
         # Should be fairly quick.
         with self.timeit(
-            "Preparing {0} items for bulk import".format(pretty_number(NUMBER)),
+            f"Preparing {pretty_number(NUMBER)} items for bulk import",
             NUMBER / 100000.0,
         ):
-            info = {"/old/{0}".format(i): "/new/{0}".format(i) for i in range(NUMBER)}
+            info = {f"/old/{i}": f"/new/{i}" for i in range(NUMBER)}
 
         # Can take long.  But 10.000 per second should be no problem.
         with self.timeit(
-            "Inserting {0} prepared items in bulk".format(pretty_number(NUMBER)),
+            f"Inserting {pretty_number(NUMBER)} prepared items in bulk",
             NUMBER / 10000.0,
         ):
             # Prepare input:
             info = {}
             for i in range(NUMBER):
-                info["/old/{0}".format(i)] = "/new/{0}".format(i)
+                info[f"/old/{i}"] = f"/new/{i}"
             st.update(info)
 
         # Should be almost instantaneous.
