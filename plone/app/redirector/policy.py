@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from zope.interface import implementer, Interface
-from zope.component import adapts
-
 from plone.app.redirector.interfaces import IRedirectionPolicy
+from zope.component import adapts
+from zope.interface import implementer
+from zope.interface import Interface
 
 
 @implementer(IRedirectionPolicy)

@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import implementer
-from zope.component import queryUtility, getMultiAdapter
-
-from Acquisition import aq_base, aq_inner
-from Products.Five.browser import BrowserView
-from Products.CMFCore.utils import getToolByName
-from Products.ZCTextIndex.ParseTree import QueryError, ParseError
-
+from Acquisition import aq_base
+from Acquisition import aq_inner
 from plone.app.redirector.interfaces import IFourOhFourView
-from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.interfaces import IRedirectionPolicy
-
+from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.memoize.instance import memoize
-
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser import BrowserView
+from Products.ZCTextIndex.ParseTree import ParseError
+from Products.ZCTextIndex.ParseTree import QueryError
 from six.moves import urllib
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import unquote
+from zope.component import getMultiAdapter
+from zope.component import queryUtility
+from zope.interface import implementer
 
 import logging
 

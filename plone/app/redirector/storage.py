@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from zope.interface import implementer
-
-from persistent import Persistent
-from BTrees.OOBTree import OOBTree, OOSet
+from BTrees.OOBTree import OOBTree
+from BTrees.OOBTree import OOSet
 from DateTime import DateTime
+from persistent import Persistent
 from plone.app.redirector.interfaces import IRedirectionStorage
+from zope.interface import implementer
 
 
 _marker = object()

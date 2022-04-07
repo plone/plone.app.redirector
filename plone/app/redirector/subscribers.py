@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from zope.component import queryUtility
-from Products.CMFCore.utils import getToolByName
-from plone.app.redirector.interfaces import IRedirectionStorage
-
 from Acquisition import aq_base
+from plone.app.redirector.interfaces import IRedirectionStorage
+from Products.CMFCore.utils import getToolByName
+from zope.component import queryUtility
 
 
 def objectMoved(obj, event):

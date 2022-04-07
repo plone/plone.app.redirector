@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
-import unittest
-import transaction
-
-from zope.component import getUtility
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from zope.component import getUtility
+
+import transaction
+import unittest
 
 
 class TestRedirectorEvents(unittest.TestCase):

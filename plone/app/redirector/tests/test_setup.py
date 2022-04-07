@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import unittest
-
-from zope.component import queryUtility
-
 from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
+from zope.component import queryUtility
+
+import unittest
 
 
 class TestRedirectorSetup(unittest.TestCase):

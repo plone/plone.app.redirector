@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import unittest
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
-
-from zope.component import getUtility, getMultiAdapter
 from plone.app.redirector.interfaces import IRedirectionStorage
-from Products.CMFPlone.interfaces import ISearchSchema
-from plone.registry.interfaces import IRegistry
-
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.interfaces import ISearchSchema
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+
+import unittest
 
 
 class TestRedirectorView(unittest.TestCase):
