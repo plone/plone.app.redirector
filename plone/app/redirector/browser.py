@@ -8,9 +8,10 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.ZCTextIndex.ParseTree import ParseError
 from Products.ZCTextIndex.ParseTree import QueryError
-from six.moves import urllib
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import unquote
+from urllib.parse import quote
+from urllib.parse import unquote
+from urllib.parse import urlsplit
+from urllib.parse import SplitResult
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import implementer
@@ -63,13 +64,13 @@ class FourOhFourView(BrowserView):
         if not new_path:
             return False
 
-        url = urllib.parse.urlsplit(new_path)
+        url = urlsplit(new_path)
         if url.netloc:
             # External URL
             # avoid double quoting
             url_path = unquote(url.path)
             url_path = quote(url_path)
-            url = urllib.parse.SplitResult(*(url[:2] + (url_path,) + url[3:])).geturl()
+            url = SplitResult(*(url[:2] + (url_path,) + url[3:])).geturl()
         else:
             url = self.request.physicalPathToURL(new_path)
 
