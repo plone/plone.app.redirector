@@ -185,8 +185,8 @@ class TestRedirectorView(unittest.TestCase):
     def test_search_query_parser_error(self):
         view = self.view(self.portal, self.portal.absolute_url() + "/&")
         try:
-            urls = view.search_for_similar()
-        except:
+            _ = view.search_for_similar()
+        except Exception:
             self.fail("Query parsing error was not handled.")
 
     def test_search_blacklisted(self):
