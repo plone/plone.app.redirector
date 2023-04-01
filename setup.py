@@ -38,6 +38,18 @@ setup(
         "setuptools",
         "plone.memoize",
         "Zope>=5",
+        "BTrees",
+        "Products.CMFCore",
+        "Products.ZCatalog",
+        "persistent",
     ],
-    extras_require={"test": ["plone.app.testing", "plone.app.contenttypes"]},
+    extras_require={
+        "test": [
+            "plone.app.testing",
+            "plone.app.contenttypes[test]",
+            "plone.base",
+            "plone.registry",
+            "plone.testing",
+        ]
+    },
 )
