@@ -1,30 +1,31 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser">
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
 
-    <adapter factory=".policy.RedirectionPolicy" />
+  <adapter factory=".policy.RedirectionPolicy" />
 
-    <!-- Register a page the UI -->
-    <browser:page
-        name="plone_redirector_view"
-        for="*"
-        class=".browser.FourOhFourView"
-        permission="zope2.View"
-        allowed_interface=".interfaces.IFourOhFourView"
-        />
+  <!-- Register a page the UI -->
+  <browser:page
+      name="plone_redirector_view"
+      for="*"
+      class=".browser.FourOhFourView"
+      allowed_interface=".interfaces.IFourOhFourView"
+      permission="zope2.View"
+      />
 
-    <!-- Remember the movements of CMF objects -->
-    <subscriber
-        for="Products.CMFCore.interfaces.IContentish
-             zope.lifecycleevent.interfaces.IObjectMovedEvent"
-        handler=".subscribers.objectMoved"
-        />
+  <!-- Remember the movements of CMF objects -->
+  <subscriber
+      for="Products.CMFCore.interfaces.IContentish
+           zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      handler=".subscribers.objectMoved"
+      />
 
-    <subscriber
-        for="Products.CMFCore.interfaces.IContentish
-             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-        handler=".subscribers.objectRemoved"
-        />
+  <subscriber
+      for="Products.CMFCore.interfaces.IContentish
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler=".subscribers.objectRemoved"
+      />
 
 
 </configure>

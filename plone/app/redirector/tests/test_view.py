@@ -2,8 +2,8 @@ from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_INTEGRATION_TESTING
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.base.interfaces import ISearchSchema
 from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.interfaces import ISearchSchema
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 
@@ -185,8 +185,8 @@ class TestRedirectorView(unittest.TestCase):
     def test_search_query_parser_error(self):
         view = self.view(self.portal, self.portal.absolute_url() + "/&")
         try:
-            urls = view.search_for_similar()
-        except:
+            _ = view.search_for_similar()
+        except Exception:
             self.fail("Query parsing error was not handled.")
 
     def test_search_blacklisted(self):

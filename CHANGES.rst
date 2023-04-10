@@ -269,7 +269,7 @@ Fixes:
   [wichert]
 
 - Update browser view to handle environments where the storage utility is not
-  availbale.
+  available.
   [wichert]
 
 
