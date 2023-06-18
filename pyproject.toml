@@ -92,6 +92,7 @@ Zope = [
   'Products.CMFCore', 'Products.CMFDynamicViewFTI',
 ]
 python-dateutil = ['dateutil']
+'Products.ZCatalog' = ['Products.ZCTextIndex']
 
 ##
 # Add extra configuration options in .meta.toml:
