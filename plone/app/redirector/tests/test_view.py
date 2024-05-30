@@ -130,20 +130,6 @@ class TestRedirectorView(unittest.TestCase):
         view = self.view(self.portal, "/foo/f1/p1/p2")
         self.assertEqual(None, view.find_first_parent())
 
-    @unittest.skip(
-        "This test does not make any sense as is."
-        "We do not have portal_css in Plone 6."
-        "So we can not check if the first parent of a sub sub item "
-        "here is not viewable."
-        "It was pure luck that it worked until now."
-    )
-    def test_find_first_parent_not_viewable(self):
-        view = self.view(
-            self.portal,
-            self.portal.absolute_url() + "/portal_css/Plone Default/gone.css",
-        )
-        self.assertEqual(None, view.find_first_parent())
-
     def test_search_leaf(self):
         self.folder.invokeFactory("Folder", "f1")
         self.folder.invokeFactory("Folder", "f2")
