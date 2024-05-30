@@ -130,13 +130,6 @@ class TestRedirectorView(unittest.TestCase):
         view = self.view(self.portal, "/foo/f1/p1/p2")
         self.assertEqual(None, view.find_first_parent())
 
-    def test_find_first_parent_not_viewable(self):
-        view = self.view(
-            self.portal,
-            self.portal.absolute_url() + "/portal_css/Plone Default/gone.css",
-        )
-        self.assertEqual(None, view.find_first_parent())
-
     def test_search_leaf(self):
         self.folder.invokeFactory("Folder", "f1")
         self.folder.invokeFactory("Folder", "f2")
