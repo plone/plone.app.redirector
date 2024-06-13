@@ -8,6 +8,22 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.3 (2024-06-13)
+------------------
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (6e36bcc4)
+
+
+Tests
+
+
+- Remove test `test_find_first_parent_not_viewable` that lost its environment in Plone 6 [@jensens] (#42)
+
+
 3.0.2 (2024-01-19)
 ------------------
 

@@ -1,1 +1,0 @@
-Remove test `test_find_first_parent_not_viewable` that lost its environment in Plone 6 [@jensens]
