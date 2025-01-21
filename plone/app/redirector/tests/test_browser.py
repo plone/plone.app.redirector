@@ -2,7 +2,7 @@ from plone.app.redirector.interfaces import IRedirectionStorage
 from plone.app.redirector.testing import PLONE_APP_REDIRECTOR_FUNCTIONAL_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from zope.component import getUtility
 
 import unittest
