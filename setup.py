@@ -31,7 +31,6 @@ setup(
     zip_safe=False,
     python_requires=">=3.10",
     install_requires=[
-        "setuptools",
         "plone.memoize",
         "Zope>=5",
         "BTrees",
