@@ -18,7 +18,6 @@ from zope.interface import implementer
 
 import logging
 
-
 logger = logging.getLogger("plone.app.redirector")
 
 

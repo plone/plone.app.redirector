@@ -5,7 +5,6 @@ from persistent import Persistent
 from plone.app.redirector.interfaces import IRedirectionStorage
 from zope.interface import implementer
 
-
 _marker = object()
 
 
