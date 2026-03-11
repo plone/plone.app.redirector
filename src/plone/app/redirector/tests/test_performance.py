@@ -5,7 +5,6 @@ from time import time
 import os
 import unittest
 
-
 env_name = "PLONE_APP_REDIRECTOR_PERFORMANCE_NUMBER"
 if env_name in os.environ:
     # This could fail with a ValueError, but that seems a fine error message.
