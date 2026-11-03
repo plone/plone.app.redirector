@@ -191,7 +191,7 @@ class RedirectionStorage(Persistent):
 
     def redirects(self, new_path):
         new_path = self._canonical(new_path)
-        return [a for a in self._rpaths.get(new_path, [])]
+        return [*self._rpaths.get(new_path, [])]
 
     def _canonical(self, path):
         if path.endswith("/"):
